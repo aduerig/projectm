@@ -1,13 +1,15 @@
-# called by: python .\driver\build_c_module_for_python.py build --compiler=mingw32
+# python build_c_module_for_python.py build
+
+# windows?
+    # called by: python .\driver\build_c_module_for_python.py build --compiler=mingw32
 
 from setuptools import setup, Extension
 import sys
 import pathlib
 
 this_file_directory = pathlib.Path(__file__).parent.resolve()
-root_of_project_directory = this_file_directory.parent
 
-sys.path.insert(0, str(root_of_project_directory))
+sys.path.insert(0, str(this_file_directory))
 from helpers import *
 
 release_mode = 'release'
@@ -17,21 +19,23 @@ if '--debug' in sys.argv:
     release_mode = 'debug'
     del sys.argv[sys.argv.index('--debug')]
 
-print_cyan(f'building with {release_mode=}, {root_of_project_directory=}, {this_file_directory=}')
+print_cyan(f'building with {release_mode=}, {this_file_directory=}')
 
-lib_dir = root_of_project_directory.joinpath('lib')
-extra_link_args = [str(lib_dir.joinpath('libShumiChess.a'))]
+src_libprojectM_folder = this_file_directory.joinpath('src', 'libprojectM')
+extra_link_args = [str(src_libprojectM_folder.joinpath('libprojectM-4.so'))]
 extra_compile_args=['-std=c++17']
 
 if release_mode == 'debug':
     extra_compile_args += ['-g', '-O0']
-else:
-    extra_compile_args += ['-Ofast']
+# else:
+#     extra_compile_args += ['-Ofast']
 
-include_dirs = [str(root_of_project_directory.joinpath('include'))]
-library_dirs = [str(root_of_project_directory.joinpath('src'))]
-
-
+include_dirs = [
+    str(src_libprojectM_folder),
+]
+library_dirs = [
+    str(src_libprojectM_folder),
+]
 
 the_module = Extension(
     'winamp_visual',
