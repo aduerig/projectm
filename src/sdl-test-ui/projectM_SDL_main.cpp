@@ -44,17 +44,13 @@ static int mainLoop(void *userData) {
     // frame rate limiter
     int fps = app->fps();
     if (fps <= 0)
-        fps = 60;
+        fps = 24;
     const Uint32 frame_delay = 1000/fps;
     Uint32 last_time = SDL_GetTicks();
     
-    // loop
     while (! app->done) {
-        // render
         app->renderFrame();
         
-        if (app->fakeAudio)
-            app->addFakePCM();
         processLoopbackFrame(app);
         
 #if UNLOCK_FPS

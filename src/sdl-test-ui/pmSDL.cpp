@@ -40,7 +40,7 @@ projectMSDL::projectMSDL(SDL_GLContext glCtx, const std::string& presetPath)
     projectm_get_window_size(_projectM, &_width, &_height);
     projectm_playlist_set_preset_switched_event_callback(_playlist, &projectMSDL::presetSwitchedEvent, static_cast<void*>(this));
     projectm_playlist_add_path(_playlist, presetPath.c_str(), true, false);
-    projectm_playlist_set_shuffle(_playlist, _shuffle);
+    // projectm_playlist_set_shuffle(_playlist, _shuffle);
 }
 
 projectMSDL::~projectMSDL()
@@ -49,79 +49,6 @@ projectMSDL::~projectMSDL()
     _playlist = nullptr;
     projectm_destroy(_projectM);
     _projectM = nullptr;
-}
-
-/* Stretch projectM across multiple monitors */
-void projectMSDL::stretchMonitors()
-{
-    int displayCount = SDL_GetNumVideoDisplays();
-    if (displayCount >= 2)
-    {
-        std::vector<SDL_Rect> displayBounds;
-        for (int i = 0; i < displayCount; i++)
-        {
-            displayBounds.push_back(SDL_Rect());
-            SDL_GetDisplayBounds(i, &displayBounds.back());
-        }
-
-        int mostXLeft = 0;
-        int mostXRight = 0;
-        int mostYUp = 0;
-        int mostYDown = 0;
-
-        for (int i = 0; i < displayCount; i++)
-        {
-            if (displayBounds[i].x < mostXLeft)
-            {
-                mostXLeft = displayBounds[i].x;
-            }
-            if ((displayBounds[i].x + displayBounds[i].w) > mostXRight)
-            {
-                mostXRight = displayBounds[i].x + displayBounds[i].w;
-            }
-        }
-        for (int i = 0; i < displayCount; i++)
-        {
-            if (displayBounds[i].y < mostYUp)
-            {
-                mostYUp = displayBounds[i].y;
-            }
-            if ((displayBounds[i].y + displayBounds[i].h) > mostYDown)
-            {
-                mostYDown = displayBounds[i].y + displayBounds[i].h;
-            }
-        }
-
-        int mostWide = abs(mostXLeft) + abs(mostXRight);
-        int mostHigh = abs(mostYUp) + abs(mostYDown);
-
-        SDL_SetWindowPosition(_sdlWindow, mostXLeft, mostYUp);
-        SDL_SetWindowSize(_sdlWindow, mostWide, mostHigh);
-    }
-}
-
-/* Moves projectM to the next monitor */
-void projectMSDL::nextMonitor()
-{
-    int displayCount = SDL_GetNumVideoDisplays();
-    int currentWindowIndex = SDL_GetWindowDisplayIndex(_sdlWindow);
-    if (displayCount >= 2)
-    {
-        std::vector<SDL_Rect> displayBounds;
-        int nextWindow = currentWindowIndex + 1;
-        if (nextWindow >= displayCount)
-        {
-            nextWindow = 0;
-        }
-
-        for (int i = 0; i < displayCount; i++)
-        {
-            displayBounds.push_back(SDL_Rect());
-            SDL_GetDisplayBounds(i, &displayBounds.back());
-        }
-        SDL_SetWindowPosition(_sdlWindow, displayBounds[nextWindow].x, displayBounds[nextWindow].y);
-        SDL_SetWindowSize(_sdlWindow, displayBounds[nextWindow].w, displayBounds[nextWindow].h);
-    }
 }
 
 void projectMSDL::toggleFullScreen()
@@ -168,6 +95,7 @@ void projectMSDL::keyHandler(SDL_Event* sdl_evt)
     // handle keyboard input (for our app first, then projectM)
     switch (sdl_keycode)
     {
+        std::cout << sdl_keycode << std::endl;
         case SDLK_a:
             projectm_set_aspect_correction(_projectM, !projectm_get_aspect_correction(_projectM));
             break;
@@ -194,31 +122,7 @@ void projectMSDL::keyHandler(SDL_Event* sdl_evt)
             {
                 // command-s: [s]tretch monitors
                 // Stereo requires fullscreen
-#if !STEREOSCOPIC_SBS
-                if (!this->stretch)
-                { // if stretching is not already enabled, enable it.
-                    stretchMonitors();
-                    this->stretch = true;
-                }
-                else
-                {
-                    toggleFullScreen(); // else, just toggle full screen so we leave stretch mode.
-                    this->stretch = false;
-                }
-#endif
                 return; // handled
-            }
-
-        case SDLK_m:
-            if (sdl_mod & KMOD_LGUI || sdl_mod & KMOD_RGUI || sdl_mod & KMOD_LCTRL)
-            {
-                // command-m: change [m]onitor
-                // Stereo requires fullscreen
-#if !STEREOSCOPIC_SBS
-                nextMonitor();
-#endif
-                this->stretch = false; // if we are switching monitors, ensure we disable monitor stretching.
-                return;                // handled
             }
 
         case SDLK_f:
@@ -236,9 +140,9 @@ void projectMSDL::keyHandler(SDL_Event* sdl_evt)
 
         case SDLK_r:
             // Use playlist shuffle to randomize.
-            projectm_playlist_set_shuffle(_playlist, true);
+            // projectm_playlist_set_shuffle(_playlist, true);
             projectm_playlist_play_next(_playlist, true);
-            projectm_playlist_set_shuffle(_playlist, _shuffle);
+            // projectm_playlist_set_shuffle(_playlist, _shuffle);
             break;
 
         case SDLK_y:
@@ -268,34 +172,6 @@ void projectMSDL::keyHandler(SDL_Event* sdl_evt)
             break;
 
     }
-}
-
-void projectMSDL::addFakePCM()
-{
-    int i;
-    int16_t pcm_data[2 * 512];
-    /** Produce some fake PCM data to stuff into projectM */
-    for (i = 0; i < 512; i++)
-    {
-        if (i % 2 == 0)
-        {
-            pcm_data[2 * i] = (float) (rand() / ((float) RAND_MAX) * (pow(2, 14)));
-            pcm_data[2 * i + 1] = (float) (rand() / ((float) RAND_MAX) * (pow(2, 14)));
-        }
-        else
-        {
-            pcm_data[2 * i] = (float) (rand() / ((float) RAND_MAX) * (pow(2, 14)));
-            pcm_data[2 * i + 1] = (float) (rand() / ((float) RAND_MAX) * (pow(2, 14)));
-        }
-        if (i % 2 == 1)
-        {
-            pcm_data[2 * i] = -pcm_data[2 * i];
-            pcm_data[2 * i + 1] = -pcm_data[2 * i + 1];
-        }
-    }
-
-    /** Add the waveform data */
-    projectm_pcm_add_int16(_projectM, pcm_data, 512, PROJECTM_STEREO);
 }
 
 void projectMSDL::resize(unsigned int width_, unsigned int height_)

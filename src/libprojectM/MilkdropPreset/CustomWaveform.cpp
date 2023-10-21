@@ -6,9 +6,6 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-#ifdef _WIN32
-#include <functional>
-#endif /** _WIN32 */
 #include <algorithm>
 #include <cmath>
 

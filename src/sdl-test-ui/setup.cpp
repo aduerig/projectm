@@ -80,12 +80,6 @@ std::string getConfigFilePath(std::string datadir_path) {
 }
 
 
-void seedRand() {
-#ifndef _WIN32
-    srand((int)(time(NULL)));
-#endif
-}
-
 void initGL() {
 #if USE_GLES
     // use GLES 2.0 (this may need adjusting)
@@ -109,14 +103,14 @@ void dumpOpenGLInfo() {
 void initStereoscopicView(SDL_Window *win) {
 #if STEREOSCOPIC_SB
     // enable stereo
-    if (SDL_GL_SetAttribute(SDL_GL_STEREO, 1) == 0)
-    {
-        SDL_Log("SDL_GL_STEREO: true");
-    }
+    // if (SDL_GL_SetAttribute(SDL_GL_STEREO, 1) == 0)
+    // {
+    //     SDL_Log("SDL_GL_STEREO: true");
+    // }
 
     // requires fullscreen mode
-    SDL_ShowCursor(false);
-    SDL_SetWindowFullscreen(win, SDL_WINDOW_FULLSCREEN);
+    // SDL_ShowCursor(false);
+    // SDL_SetWindowFullscreen(win, SDL_WINDOW_FULLSCREEN);
 #endif
 }
 
@@ -131,7 +125,6 @@ void enableGLDebugOutput() {
 // initialize SDL, openGL, config
 projectMSDL *setupSDLApp() {
     projectMSDL *app;
-    seedRand();
         
     if (!initLoopback())
 		{
@@ -149,21 +142,13 @@ projectMSDL *setupSDLApp() {
 
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 
-    if (! SDL_VERSION_ATLEAST(2, 0, 5)) {
-        SDL_Log("SDL version 2.0.5 or greater is required. You have %i.%i.%i", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
-        exit(1);
-    }
-
     // default window size to usable bounds (e.g. minus menubar and dock)
     SDL_Rect initialWindowBounds;
-#if SDL_VERSION_ATLEAST(2, 0, 5)
-    // new and better
-    SDL_GetDisplayUsableBounds(0, &initialWindowBounds);
-#else
-    SDL_GetDisplayBounds(0, &initialWindowBounds);
-#endif
-    int width = initialWindowBounds.w;
-    int height = initialWindowBounds.h;
+
+    // int width = initialWindowBounds.w;
+    // int height = initialWindowBounds.h;
+    int width = 32;
+    int height = 20;
 
     initGL();
 
@@ -173,10 +158,6 @@ projectMSDL *setupSDLApp() {
     initStereoscopicView(win);
 
     SDL_GLContext glCtx = SDL_GL_CreateContext(win);
-
-#if defined(_WIN32)
-	GLenum err = glewInit();
-#endif /** _WIN32 */
 
     dumpOpenGLInfo();
 
@@ -223,34 +204,30 @@ projectMSDL *setupSDLApp() {
     // center window and full desktop screen
     SDL_DisplayMode dm;
     if (SDL_GetDesktopDisplayMode(0, &dm) == 0) {
-        width = dm.w;
-        height = dm.h;
+        SDL_SetWindowPosition(win, dm.w / 2, dm.h / 2);
     } else {
         SDL_Log("SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
+        SDL_SetWindowPosition(win, initialWindowBounds.x, initialWindowBounds.y);
     }
-    SDL_SetWindowPosition(win, initialWindowBounds.x, initialWindowBounds.y);
     SDL_SetWindowSize(win, width, height);
     app->resize(width, height);
 
-    // Create a help menu specific to SDL
     std::string modKey = "CTRL";
-
-#if __APPLE__
-    modKey = "CMD";
-#endif
-
     app->init(win);
 
 #if STEREOSCOPIC_SBS
     app->toggleFullScreen();
 #endif
-#if FAKE_AUDIO
-    app->fakeAudio  = true;
-#endif
-
     enableGLDebugOutput();
     configureLoopback(app);
 
+    // INFO: Found audio capture device 0: Monitor of GA102 High Definition Audio Controller Digital Stereo (HDMI)
+    // INFO: Found audio capture device 1: Monitor of FIFINE K678 Microphone Analog Stereo
+    // INFO: Found audio capture device 2: FIFINE K678 Microphone Analog Stereo
+    // INFO: Found audio capture device 3: Monitor of Starship/Matisse HD Audio Controller Digital Stereo (IEC958)
+    // INFO: Found audio capture device 4: Starship/Matisse HD Audio Controller Analog Stereo
+    // INFO: Found audio capture device 5: Monitor of henry
+    // SDL_AudioInit("Monitor of henry");
 #if !FAKE_AUDIO && !WASAPI_LOOPBACK
     // get an audio input device
     if (app->openAudioInput())

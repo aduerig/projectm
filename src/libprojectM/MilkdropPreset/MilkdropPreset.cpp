@@ -28,6 +28,8 @@
 #ifdef MILKDROP_PRESET_DEBUG
 #include <iostream>
 #endif
+#include <sstream>
+#include <iostream>
 
 MilkdropPreset::MilkdropPreset(const std::string& absoluteFilePath)
     : m_absoluteFilePath(absoluteFilePath)
@@ -83,6 +85,8 @@ void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audio
         m_motionVectorUVMap->SetSize(renderContext.viewportSizeX, renderContext.viewportSizeY);
         m_isFirstFrame = true;
     }
+
+
 
     m_state.mainTexture = m_framebuffer.GetColorAttachmentTexture(m_previousFrameBuffer, 0);
 
@@ -168,9 +172,35 @@ void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audio
 #else
     glDrawBuffer(GL_COLOR_ATTACHMENT0);
 #endif
-    glBlitFramebuffer(0, 0, renderContext.viewportSizeX, renderContext.viewportSizeY,
-                      0, 0, renderContext.viewportSizeX, renderContext.viewportSizeY,
-                      GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    // draws framebuffer to screen
+    // glBlitFramebuffer(0, 0, renderContext.viewportSizeX, renderContext.viewportSizeY,
+    //                   0, 0, renderContext.viewportSizeX, renderContext.viewportSizeY,
+    //                   GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+
+    GLubyte* andrew_pixels = new GLubyte[3 * renderContext.viewportSizeX * renderContext.viewportSizeY];
+    glReadPixels(0, 0, renderContext.viewportSizeX, renderContext.viewportSizeY, GL_RGB, GL_UNSIGNED_BYTE, andrew_pixels);
+    
+
+    std::stringstream ss;
+    for (int y = 0; y < renderContext.viewportSizeY; y++) {
+        for (int x = 0; x < renderContext.viewportSizeX; x++) {
+            int index = (y * renderContext.viewportSizeX + x) * 3;
+            int r = andrew_pixels[index];
+            int g = andrew_pixels[index + 1];
+            int b = andrew_pixels[index + 2];
+            ss << "\033[48;2;" << r << ";" << g << ";" << b << "m  \033[0m";
+        }
+        ss << std::endl;
+    }
+
+    ss << "Dimensions: " << renderContext.viewportSizeX << " x " << renderContext.viewportSizeY << ", Preset: " << m_absolutePath << std::endl;
+    std::cout << ss.str();
+
+    std::cout << "\033[" << renderContext.viewportSizeY + 1 << "A";
+
+
+    // int m_currentFrameBuffer{0};
 
     // Swap framebuffers for the next frame.
     std::swap(m_currentFrameBuffer, m_previousFrameBuffer);
@@ -199,6 +229,8 @@ void MilkdropPreset::Load(const std::string& pathname)
     std::cerr << "[Preset] Loading preset from file \"" << pathname << "\"." << std::endl;
 #endif
 
+    std::cout << "andrew: milkdrop: loading pathname" << std::endl;
+
     SetFilename(ParseFilename(pathname));
 
     PresetFileParser parser;
@@ -220,6 +252,8 @@ void MilkdropPreset::Load(std::istream& stream)
     std::cerr << "[Preset] Loading preset from stream." << std::endl;
 #endif
 
+    std::cout << "andrew: milkdrop: Load stream" << std::endl;
+
     PresetFileParser parser;
 
     if (!parser.Read(stream))
@@ -235,6 +269,8 @@ void MilkdropPreset::Load(std::istream& stream)
 
 void MilkdropPreset::InitializePreset(PresetFileParser& parsedFile)
 {
+    std::cout << "andrew: milkdrop: InitializePreset" << std::endl;
+
     // Create the offscreen rendering surfaces.
     m_motionVectorUVMap = std::make_shared<TextureAttachment>(GL_RG16F, GL_RG, GL_FLOAT, 0, 0);
     m_framebuffer.CreateColorAttachment(0, 0); // Main image 1

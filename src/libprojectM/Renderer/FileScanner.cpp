@@ -7,13 +7,9 @@
 #include "FileScanner.hpp"
 
 /** Per-platform path separators and includes */
-#ifdef _WIN32
-char constexpr pathSeparator{'\\'};
-#else
 char constexpr pathSeparator{'/'};
 #include <sys/stat.h>
 #include <sys/types.h>
-#endif
 
 #include <algorithm>
 
@@ -126,23 +122,6 @@ void FileScanner::scanGeneric(ScanCallback cb, const char* currentDir)
             continue;
 
         std::string fullPath = std::string(currentDir) + pathSeparator + filename;
-
-#ifndef _WIN32
-        // filesystems are free to return DT_UNKNOWN
-        if (dir_entry->d_type == DT_UNKNOWN)
-        {
-            struct stat stat_path;
-            if (stat(fullPath.c_str(), &stat_path) == 0)
-            {
-                /**/ if (S_ISDIR(stat_path.st_mode))
-                    dir_entry->d_type = DT_DIR;
-                else if (S_ISLNK(stat_path.st_mode))
-                    dir_entry->d_type = DT_LNK;
-                else if (S_ISREG(stat_path.st_mode))
-                    dir_entry->d_type = DT_REG;
-            }
-        }
-#endif
 
         if (dir_entry->d_type == DT_DIR)
         {

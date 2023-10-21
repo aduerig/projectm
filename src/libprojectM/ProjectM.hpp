@@ -26,14 +26,6 @@
 
 #include "libprojectM/Audio/PCM.hpp"
 
-#ifdef _WIN32
-
-#ifdef _MSC_VER
-#pragma warning(disable : 4244)
-#pragma warning(disable : 4305)
-#endif /* _MSC_VER */
-#endif /** _WIN32 */
-
 #include <sys/types.h>
 
 #include <memory>

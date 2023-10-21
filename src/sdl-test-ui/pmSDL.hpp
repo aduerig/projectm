@@ -30,9 +30,6 @@
 #include <SDL2/SDL.h>
 
 // Disable LOOPBACK and FAKE audio to enable microphone input
-#ifdef _WIN32
-#define WASAPI_LOOPBACK 1
-#endif /** _WIN32 */
 #define FAKE_AUDIO 0
 // ----------------------------
 #define TEST_ALL_PRESETS 0
@@ -74,12 +71,7 @@
 
 #endif /** WASAPI_LOOPBACK */
 
-#ifdef _WIN32
-#define SDL_MAIN_HANDLED
-#include "SDL.h"
-#else
 #include <SDL2/SDL.h>
-#endif /** _WIN32 */
 
 
 // DATADIR_PATH should be set by the root Makefile if this is being
@@ -87,16 +79,9 @@
 #ifndef DATADIR_PATH
 #ifdef DEBUG
 #define DATADIR_PATH "."
-#ifndef _WIN32
-#warning "DATADIR_PATH is not defined - falling back to ./"
-#else
 #pragma warning "DATADIR_PATH is not defined - falling back to ./"
-#endif /** _WIN32 */
 #else
 #define DATADIR_PATH "/usr/local/share/projectM"
-#ifndef _WIN32
-#warning "DATADIR_PATH is not defined - falling back to /usr/local/share/projectM"
-#endif /** _WIN32 */
 #endif
 #endif
 
@@ -114,8 +99,6 @@ public:
     int initAudioInput();
     void beginAudioCapture();
     void endAudioCapture();
-    void stretchMonitors();
-    void nextMonitor();
     void toggleFullScreen();
     void resize(unsigned int width, unsigned int height);
     void touch(float x, float y, int pressure, int touchtype = 0);
@@ -126,7 +109,6 @@ public:
     void pollEvent();
     bool keymod = false;
     std::string getActivePresetName();
-    void addFakePCM();
     projectm_handle projectM();
     void setFps(size_t fps);
     size_t fps() const;
