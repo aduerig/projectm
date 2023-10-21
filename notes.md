@@ -16,6 +16,11 @@ src/sdl-test-ui/projectM-Test-UI
 
 rm CMakeCache.txt; cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_SDL_UI=ON && cmake --build . -- -j && src/sdl-test-ui/projectM-Test-UI
 
+static:
+    rm CMakeCache.txt; cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF -DENABLE_SDL_UI=ON && cmake --build . -- -j && src/sdl-test-ui/projectM-Test-UI
+
+
+
 milkdroppreset.cpp
 lBlitFramebuffer(0, 0, renderContext.viewportSizeX, renderContext.vie
 
