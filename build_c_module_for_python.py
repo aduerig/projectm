@@ -1,8 +1,9 @@
-# python build_c_module_for_python.py build
-
+# python build_c_module_for_python.py build --build-lib=.
+    # puts so in current directory
 # windows?
     # called by: python .\driver\build_c_module_for_python.py build --compiler=mingw32
 
+import shutil
 from setuptools import setup, Extension
 import sys
 import pathlib
@@ -21,10 +22,16 @@ if '--debug' in sys.argv:
 
 print_cyan(f'building with {release_mode=}, {this_file_directory=}')
 
+extra_link_args = []
 src_libprojectM_folder = this_file_directory.joinpath('src', 'libprojectM')
-extra_link_args = [str(src_libprojectM_folder.joinpath('libprojectM-4.so'))]
-extra_compile_args=['-std=c++17']
+for _, path in get_all_paths(src_libprojectM_folder):
+    if '.so' in path.name:
+        final_lib_path = this_file_directory.joinpath(path.name)
+        shutil.copy(path, final_lib_path)
+        extra_link_args.append(str(final_lib_path))
 
+
+extra_compile_args=['-std=c++17']
 if release_mode == 'debug':
     extra_compile_args += ['-g', '-O0']
 # else:
@@ -39,7 +46,7 @@ library_dirs = [
 
 the_module = Extension(
     'winamp_visual',
-    sources = [str(this_file_directory.joinpath('winamp_visual.cpp'))],
+    sources = [str(this_file_directory.joinpath('winamp_visualmodule.cpp'))],
     include_dirs=include_dirs,
     library_dirs=library_dirs,
     # tries to do a .so (dynamic) build with this
