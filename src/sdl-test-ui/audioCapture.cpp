@@ -117,8 +117,8 @@ int projectMSDL::openAudioInput() {
     // Note: this might work even if NumAudioDevices == 0 (example: if only a
     // monitor device exists, and SDL_HINT_AUDIO_INCLUDE_MONITORS is not set).
     // So we always try it, and revert to fakeAudio if the default fails _and_ NumAudioDevices == 0.
-    _curAudioDevice = 1;
-    _selectedAudioDevice = 1;
+    _curAudioDevice = 0;
+    _selectedAudioDevice = 0;
     if(!initAudioInput() && _numAudioDevices == 0) {
         // the default device doesn't work, and there's no other device to try
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "No audio capture devices found");

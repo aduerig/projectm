@@ -94,9 +94,7 @@ auto BlurTexture::GetDescriptorsForBlurLevel(BlurTexture::BlurLevel blurLevel) c
 void BlurTexture::Update(const PresetState& presetState, const PerFrameContext& perFrameContext)
 {
     if (m_blurLevel == BlurLevel::None)
-    {
         return;
-    }
 
     auto sourceTexture = presetState.mainTexture.lock();
 

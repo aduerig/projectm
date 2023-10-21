@@ -6,6 +6,8 @@ src/libprojectM/config.inp.b
 src/libprojectM/config.inp.in
 src/projectM-emscripten/build/presets
 presets/custom
+vendor/projectm-eval
+old
 project.xcworkspace
 *.o
 *.lo

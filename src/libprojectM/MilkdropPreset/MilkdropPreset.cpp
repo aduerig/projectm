@@ -86,8 +86,6 @@ void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audio
         m_isFirstFrame = true;
     }
 
-
-
     m_state.mainTexture = m_framebuffer.GetColorAttachmentTexture(m_previousFrameBuffer, 0);
 
     // First evaluate per-frame code
@@ -139,8 +137,6 @@ void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audio
         m_darkenCenter.Draw();
     }
     m_border.Draw(m_perFrameContext);
-
-    // Todo: Song title anim would go here
 
     // y-flip the image for final compositing again
     m_flipTexture.Draw(m_framebuffer.GetColorAttachmentTexture(m_currentFrameBuffer, 0));
