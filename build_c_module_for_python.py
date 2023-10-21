@@ -3,7 +3,6 @@
 from setuptools import setup, Extension
 import sys
 import pathlib
-import os
 
 this_file_directory = pathlib.Path(__file__).parent.resolve()
 root_of_project_directory = this_file_directory.parent
@@ -29,11 +28,16 @@ if release_mode == 'debug':
 else:
     extra_compile_args += ['-Ofast']
 
+include_dirs = [str(root_of_project_directory.joinpath('include'))]
+library_dirs = [str(root_of_project_directory.joinpath('src'))]
+
+
+
 the_module = Extension(
     'winamp_visual',
-    sources = [str(this_file_directory.joinpath('engine_communicatormodule.cpp'))],
-    include_dirs = [str(root_of_project_directory.joinpath('src'))],
-    library_dirs = [str(root_of_project_directory.joinpath('lib'))],
+    sources = [str(this_file_directory.joinpath('winamp_visual.cpp'))],
+    include_dirs=include_dirs,
+    library_dirs=library_dirs,
     # tries to do a .so (dynamic) build with this
     # libraries = ['ShumiChess'],
     extra_compile_args=extra_compile_args,

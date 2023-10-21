@@ -52,11 +52,7 @@ set(PROJECTM_INCLUDE_DIR "${CMAKE_INSTALL_INCLUDEDIR}" CACHE STRING "Header inst
 set(PROJECTM_DUMMY_SOURCE_FILE "${PROJECTM_BINARY_DIR}/dummy.cpp")
 file(TOUCH "${PROJECTM_DUMMY_SOURCE_FILE}")
 
-if(CMAKE_SYSTEM_NAME STREQUAL Emscripten)
-    set(ENABLE_EMSCRIPTEN ON CACHE BOOL "Build for web with emscripten. Will also build the SDL2-based entrypoint." FORCE)
-else()
-    set(ENABLE_EMSCRIPTEN OFF CACHE BOOL "Build for web with emscripten. Requires emscripten toolset for building." FORCE)
-endif()
+set(ENABLE_EMSCRIPTEN OFF CACHE BOOL "Build for web with emscripten. Requires emscripten toolset for building." FORCE)
 
 # Feature options, including dependencies.
 option(BUILD_TESTING "Build the libprojectM test suite" OFF)
@@ -82,106 +78,59 @@ else()
             )
 endif()
 
-if(ENABLE_EMSCRIPTEN)
-    message(STATUS "${CMAKE_C_COMPILER} on ${CMAKE_SYSTEM_NAME}")
-    check_symbol_exists(__EMSCRIPTEN__ "" HAVE_EMSCRIPTEN)
-    if(NOT HAVE_EMSCRIPTEN)
-        message(FATAL_ERROR "You are not using an emscripten compiler.")
+if(ENABLE_SDL_UI)
+    find_package(SDL2 REQUIRED)
+
+    # Apply some fixes, as SDL2's CMake support is new and still a WiP.
+    include(SDL2Target)
+endif()
+
+if(ENABLE_GLES)
+    message(STATUS "Building for OpenGL Embedded Profile")
+    if(NOT CMAKE_SYSTEM_NAME STREQUAL Linux
+            AND NOT CMAKE_SYSTEM_NAME STREQUAL Android)
+        message(FATAL_ERROR "OpenGL ES 3 support is currently only available for Linux platforms. You're building for ${CMAKE_SYSTEM_NAME}.")
     endif()
 
-    # emscripten uses different options to compile and link libraries, so we can't use find_package().
-    # Instead, specifying the required options directly to emcc is the way to go.
-    # Note: The "SHELL:" syntax is required to pass each argument as-is, but without quotes and CMake's de-duplication.
-    add_compile_options(
-            "SHELL:-s USE_SDL=2"
-            "SHELL:-s MIN_WEBGL_VERSION=2"
-            "SHELL:-s MAX_WEBGL_VERSION=2"
-            "SHELL:-s ALLOW_MEMORY_GROWTH=1"
-            "SHELL:-s NO_DISABLE_EXCEPTION_CATCHING"
-            )
-
-    add_link_options(
-            "SHELL:-s USE_SDL=2"
-            "SHELL:-s MIN_WEBGL_VERSION=2"
-            "SHELL:-s MAX_WEBGL_VERSION=2"
-            "SHELL:-s FULL_ES2=1"
-            "SHELL:-s ALLOW_MEMORY_GROWTH=1"
-            "SHELL:-s NO_DISABLE_EXCEPTION_CATCHING"
-            )
-
-    if(ENABLE_THREADING)
-        message(AUTHOR_WARNING "Threading on emscripten is deemed stable, but may have issues. Use with care.\n"
-                "See https://emscripten.org/docs/porting/pthreads.html for more information.")
-        add_compile_options(-pthread)
-        add_link_options(-pthread)
+    # We use a local find script for OpenGL::GLES3 until the proposed changes are merged upstream.
+    list(APPEND CMAKE_MODULE_PATH "${PROJECTM_SOURCE_DIR}/cmake/gles")
+    find_package(OpenGL REQUIRED COMPONENTS GLES3)
+    if(NOT TARGET OpenGL::GLES3)
+        message(FATAL_ERROR "No suitable GLES3 library was found.")
     endif()
 
+    set(PROJECTM_OPENGL_LIBRARIES OpenGL::GLES3)
     set(USE_GLES ON)
 else()
-    if(ENABLE_SDL_UI)
-        find_package(SDL2 REQUIRED)
-
-        # Apply some fixes, as SDL2's CMake support is new and still a WiP.
-        include(SDL2Target)
+    message(STATUS "Building for OpenGL Core Profile")
+    find_package(OpenGL REQUIRED)
+    set(PROJECTM_OPENGL_LIBRARIES OpenGL::GL)
+    # GLX is required by SOIL2 on platforms with the X Window System (e.g. most Linux distributions)
+    if(TARGET OpenGL::GLX)
+        list(APPEND PROJECTM_OPENGL_LIBRARIES OpenGL::GLX)
     endif()
+endif()
 
-    if(ENABLE_GLES)
-        message(STATUS "Building for OpenGL Embedded Profile")
-        if(NOT CMAKE_SYSTEM_NAME STREQUAL Linux
-                AND NOT CMAKE_SYSTEM_NAME STREQUAL Android)
-            message(FATAL_ERROR "OpenGL ES 3 support is currently only available for Linux platforms. You're building for ${CMAKE_SYSTEM_NAME}.")
-        endif()
-
-        # We use a local find script for OpenGL::GLES3 until the proposed changes are merged upstream.
-        list(APPEND CMAKE_MODULE_PATH "${PROJECTM_SOURCE_DIR}/cmake/gles")
-        find_package(OpenGL REQUIRED COMPONENTS GLES3)
-        if(NOT TARGET OpenGL::GLES3)
-            message(FATAL_ERROR "No suitable GLES3 library was found.")
-        endif()
-
-        set(PROJECTM_OPENGL_LIBRARIES OpenGL::GLES3)
-        set(USE_GLES ON)
-    else()
-        message(STATUS "Building for OpenGL Core Profile")
-        find_package(OpenGL REQUIRED)
-        set(PROJECTM_OPENGL_LIBRARIES OpenGL::GL)
-        # GLX is required by SOIL2 on platforms with the X Window System (e.g. most Linux distributions)
-        if(TARGET OpenGL::GLX)
-            list(APPEND PROJECTM_OPENGL_LIBRARIES OpenGL::GLX)
-        endif()
-        if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-            find_package(GLEW REQUIRED)
-            # Prefer shared, but check for static lib if shared is not available.
-            if(TARGET GLEW::glew)
-                list(APPEND PROJECTM_OPENGL_LIBRARIES GLEW::glew)
-            elseif(TARGET GLEW::glew_s)
-                list(APPEND PROJECTM_OPENGL_LIBRARIES GLEW::glew_s)
-            endif()
-        endif()
+if(ENABLE_OPENMP)
+    find_package(OpenMP)
+    if(NOT OpenMP_FOUND OR NOT OpenMP_CXX_FOUND)
+        set(ENABLE_OPENMP OFF)
     endif()
+endif()
 
-    if(ENABLE_OPENMP)
-        find_package(OpenMP)
-        if(NOT OpenMP_FOUND OR NOT OpenMP_CXX_FOUND)
-            set(ENABLE_OPENMP OFF)
-        endif()
+if(ENABLE_THREADING)
+    find_package(Threads REQUIRED)
+    set(PROJECTM_USE_THREADS YES)
+endif()
+
+if(ENABLE_LLVM)
+    find_package(LLVM REQUIRED)
+    if(LLVM_VERSION VERSION_LESS 10.0)
+        message(FATAL_ERROR "LLVM JIT support requires at least version 10.0, but only ${LLVM_VERSION} was found.")
     endif()
-
-    if(ENABLE_THREADING)
-        find_package(Threads REQUIRED)
-        set(PROJECTM_USE_THREADS YES)
-    endif()
-
-    if(ENABLE_LLVM)
-        find_package(LLVM REQUIRED)
-        if(LLVM_VERSION VERSION_LESS 10.0)
-            message(FATAL_ERROR "LLVM JIT support requires at least version 10.0, but only ${LLVM_VERSION} was found.")
-        endif()
-        set(HAVE_LLVM TRUE)
-    else()
-        unset(HAVE_LLVM)
-    endif()
-
+    set(HAVE_LLVM TRUE)
+else()
+    unset(HAVE_LLVM)
 endif()
 
 if(ENABLE_CXX_INTERFACE)
