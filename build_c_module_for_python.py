@@ -30,6 +30,8 @@ for _, path in get_all_paths(src_libprojectM_folder):
         shutil.copy(path, final_lib_path)
         extra_link_args.append(str(final_lib_path))
 
+vendor_folder = this_file_directory.joinpath('vendor')
+# glm_folder = vendor_folder.joinpath('glm')
 
 extra_compile_args=['-std=c++17']
 if release_mode == 'debug':
@@ -37,16 +39,27 @@ if release_mode == 'debug':
 # else:
 #     extra_compile_args += ['-Ofast']
 
+include_dir_api_1 = this_file_directory.joinpath('src', 'api', 'include')
+include_dir_api_2 = this_file_directory.joinpath('src', 'playlist', 'api', 'include')
+
 include_dirs = [
     str(src_libprojectM_folder),
+    str(vendor_folder), # for glm
+    str(include_dir_api_1),
+    str(include_dir_api_2),
 ]
 library_dirs = [
     str(src_libprojectM_folder),
 ]
 
+sources = [
+    str(this_file_directory.joinpath('winamp_visualmodule.cpp')),
+    str(this_file_directory.joinpath('my_sdl.cpp')),
+]
+
 the_module = Extension(
     'winamp_visual',
-    sources = [str(this_file_directory.joinpath('winamp_visualmodule.cpp'))],
+    sources=sources,
     include_dirs=include_dirs,
     library_dirs=library_dirs,
     # tries to do a .so (dynamic) build with this

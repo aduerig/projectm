@@ -12,11 +12,10 @@ from helpers import *
 # ok this is a hack currently i think i should just compile statically?
 import ctypes
 ctypes.CDLL(str(this_file_directory.joinpath('libprojectM-4.so.4')))
+ctypes.CDLL(str(this_file_directory.joinpath('libprojectM-4d.so.4')))
 
 import winamp_visual
 
 winamp_visual.systemcall('echo "systemcall!"')
 winamp_visual.print_from_c('hello!')
-
-
 winamp_visual.setup_winamp()
