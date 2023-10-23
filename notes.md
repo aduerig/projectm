@@ -19,6 +19,7 @@ rm CMakeCache.txt; cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_SDL_UI=ON && cmake --
 static:
     rm CMakeCache.txt; cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF -DENABLE_SDL_UI=ON && cmake --build . -- -j && src/sdl-test-ui/projectM-Test-UI
 
+INFO: Displaying preset: ./presets/presets-cream-of-the-crop/Waveform/Wire Tunnel/stahlregen + geiss + martin - the origin of galaxies.milk
 
 
 milkdroppreset.cpp
