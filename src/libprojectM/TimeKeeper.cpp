@@ -10,6 +10,7 @@ TimeKeeper::TimeKeeper(double presetDuration, double smoothDuration, double hard
     , m_softCutDuration(smoothDuration)
     , m_hardCutDuration(hardcutDuration)
 {
+    std::cout << "TimeKeeper::TimeKeeper" << std::endl;
     UpdateTimers();
 }
 

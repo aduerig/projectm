@@ -211,7 +211,7 @@ int ProjectM::GetGrabWidth() {
 }
 
 int ProjectM::GetGrabHeight() {
-    return m_activePreset->grab_width;
+    return m_activePreset->grab_height;
 }
 
 GLubyte* ProjectM::GetAndrewPixels() {
@@ -222,6 +222,8 @@ GLubyte* ProjectM::GetAndrewPixels() {
 
 void ProjectM::Initialize()
 {
+    std::cout << "ProjectM::Initialize" << std::endl;
+
     /** Initialise start time */
     m_timeKeeper = std::make_unique<TimeKeeper>(m_presetDuration,
                                                 m_softCutDuration,
@@ -234,6 +236,7 @@ void ProjectM::Initialize()
     /** We need to initialise this before the builtin param db otherwise bass/mid etc won't bind correctly */
     assert(!m_beatDetect);
 
+    std::cout << "Before bprojectM::Audio::BeatDet" << std::endl;
     m_beatDetect = std::make_unique<libprojectM::Audio::BeatDetect>(m_pcm);
 
     m_renderer = std::make_unique<Renderer>(m_windowWidth, m_windowHeight);
@@ -244,9 +247,12 @@ void ProjectM::Initialize()
 
     /* Set the seed to the current time in seconds */
     srand(time(nullptr));
+    std::cout << "Before ResetEngine" << std::endl;
 
     ResetEngine();
     LoadIdlePreset();
+
+    std::cout << "Before #if PROJECTM_USE_THREADS" << std::endl;
 
 #if PROJECTM_USE_THREADS
     m_workerSync->Reset();

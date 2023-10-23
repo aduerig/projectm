@@ -12,6 +12,9 @@
 # windows?
     # called by: python .\driver\build_c_module_for_python.py build --compiler=mingw32
 
+
+
+
 from setuptools import setup, Extension
 import sys
 import pathlib
@@ -55,6 +58,12 @@ include_dir_api_2 = this_file_directory.joinpath('src', 'playlist', 'api')
 include_dir_api_3 = this_file_directory.joinpath('src', 'playlist', 'include')
 include_dir_api_4 = this_file_directory.joinpath('src', 'api', 'include', 'projectM-4')
 
+import numpy, os
+numpy_lib_path = os.path.join(numpy.__path__[0], 'core', 'lib')
+numpy_include_dir = numpy.get_include()
+
+
+
 include_dirs = [
     str(src_folder),
     str(src_libprojectM_folder),
@@ -63,15 +72,23 @@ include_dirs = [
     str(include_dir_api_2),
     str(include_dir_api_3),
     str(include_dir_api_4),
+    numpy_include_dir
 ]
+
 library_dirs = [
     str(src_libprojectM_folder),
+    # str(numpy_lib_path),
 ]
 
 sources = [
     str(this_file_directory.joinpath('winamp_visualmodule.cpp')),
+    # str(numpy_lib_path),
 ]
 
+
+
+# ProjectM::ProjectM() before
+# zsh: floating point exception (core dumped)  LD_LIBRARY_PATH=src/libprojectM python test_winamp_visual.py
 
 def get_python_config(flag):
     return subprocess.check_output(['python-config', flag]).decode('utf-8').strip().split()
@@ -87,7 +104,8 @@ the_module = Extension(
     include_dirs=include_dirs,
     library_dirs=library_dirs,
     # tries to do a .so (dynamic) build with this
-    libraries = ['projectM-4', 'GL', 'SDL2', 'SDL2main', 'dl', 'asound', 'pulse-simple', 'pulse', 'm', 'X11', 'Xext', 'Xcursor', 'Xinerama', 'Xi', 'Xrandr', 'Xss', 'Xxf86vm', 'pthread', 'rt'], # EGL
+    # needs numpy!!
+    libraries = ['projectM-4', 'GL', 'SDL2', 'SDL2main', 'dl', 'asound', 'pulse-simple', 'pulse', 'm', 'X11', 'Xext', 'Xcursor', 'Xinerama', 'Xi', 'Xrandr', 'Xss', 'Xxf86vm', 'pthread', 'rt'], 
     extra_compile_args=extra_compile_args + python_extra_compile_args,
     extra_link_args=extra_link_args + python_extra_link_args,
 )
