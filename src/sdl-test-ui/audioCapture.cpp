@@ -84,7 +84,8 @@ int projectMSDL::openAudioInput() {
     fakeAudio = false; // if we are opening an audio input then there is no need for fake audio.
     // get audio driver name (static)
     const char* driver_name = SDL_GetCurrentAudioDriver();
-    SDL_Log("Using audio driver: %s\n", driver_name);
+    std::cout << "python/c++: Using audio driver: " << driver_name << SDL_GetError() << std::endl;
+
 
     // get audio input device
     _numAudioDevices = SDL_GetNumAudioDevices(true);  // capture, please

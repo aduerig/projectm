@@ -123,11 +123,10 @@ projectMSDL *setupSDLApp() {
     SDL_GetVersion(&linked);
     SDL_Log("Using SDL version %d.%d.%d\n", linked.major, linked.minor, linked.patch);
 
-#if !FAKE_AUDIO
-    // get an audio input device
+// #if !FAKE_AUDIO
     if (app->openAudioInput())
         app->beginAudioCapture();
-#endif
+// #endif
 
     return app;
 }

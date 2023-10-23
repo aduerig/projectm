@@ -68,7 +68,6 @@ library_dirs = [
 
 sources = [
     str(this_file_directory.joinpath('winamp_visualmodule.cpp')),
-    str(this_file_directory.joinpath('my_sdl.cpp')),
 ]
 
 extra_link_args = []

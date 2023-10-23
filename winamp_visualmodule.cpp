@@ -72,16 +72,14 @@ int initAudioInput(int selected_device) {
     return audioDeviceId;
 }
 
-
-
 void openAudioInput() {
     const char* driver_name = SDL_GetCurrentAudioDriver();
     std::cout << "python/c++: Using audio driver: " << driver_name << SDL_GetError() << std::endl;
 
 
-    int _numAudioDevices = SDL_GetNumAudioDevices(true);  // capture, please
+    unsigned int _numAudioDevices = SDL_GetNumAudioDevices(true);  // capture, please
     std::cout << "python/c++: Found " << _numAudioDevices << " audio capture devices" << std::endl;
-    for (int i = 0; i < _numAudioDevices; i++) {
+    for (unsigned int i = 0; i < _numAudioDevices; i++) {
         std::cout << "python/c++: Found audio capture device: " << i << ", " << SDL_GetAudioDeviceName(i, true) << std::endl;
     }
 
@@ -117,23 +115,15 @@ winamp_visual_setup_winamp(PyObject* self, PyObject* args) {
     _projectM = projectm_create();
     projectm_set_window_size(_projectM, 32, 20);
 
+    SDL_SetHint(SDL_HINT_AUDIO_INCLUDE_MONITORS, "1");
+
+
     // SDL 
 
-    // if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
-    //     SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
-    // }
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-        std::cerr << "SDL initialization failed: " << SDL_GetError() << std::endl;
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
+        SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
     }
 
-    // real is:     2.28.4
-    // ours is also 2.28.4
-    SDL_version linked;
-    SDL_GetVersion(&linked);
-    // std::cout << "C++ - Python Extension: Using SDL version " << linked.major << "." << linked.minor << "." << linked.patch << "\n";
-    SDL_Log("Using SDL version %d.%d.%d\n", linked.major, linked.minor, linked.patch);
-
-    std::cout << "C++ - Python Extension: after up winamp" << std::endl;
     std::cout << "C++ - Python Extension: setting up sdl OR glfw window" << std::endl;
 
 
@@ -223,3 +213,9 @@ PyMODINIT_FUNC
 PyInit_winamp_visual(void) {
     return PyModule_Create(&winamp_visualmodule);
 }
+
+
+// SDL_version linked;
+// SDL_GetVersion(&linked);
+// // std::cout << "C++ - Python Extension: Using SDL version " << linked.major << "." << linked.minor << "." << linked.patch << "\n";
+// SDL_Log("Using SDL version %d.%d.%d\n", linked.major, linked.minor, linked.patch);

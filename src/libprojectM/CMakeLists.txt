@@ -44,13 +44,6 @@ target_link_libraries(projectM_main
         libprojectM::API
         )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    target_link_libraries(projectM_main
-            PUBLIC
-            "-framework CoreFoundation"
-            )
-endif()
-
 target_include_directories(projectM_main
         PRIVATE
         "${PROJECTM_SOURCE_DIR}/src"

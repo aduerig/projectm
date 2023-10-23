@@ -14,6 +14,11 @@ src/sdl-test-ui/projectM-Test-UI
 
 
 
+
+-Wl,-rpath, /usr/lib/libGLESv2.so /usr/lib/libgomp.so /usr/lib/libpthread.a 
+
+
+
 rm CMakeCache.txt; cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_SDL_UI=ON && cmake --build . -- -j && src/sdl-test-ui/projectM-Test-UI
 
 static:
