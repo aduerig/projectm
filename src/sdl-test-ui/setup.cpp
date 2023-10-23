@@ -126,12 +126,6 @@ void enableGLDebugOutput() {
 projectMSDL *setupSDLApp() {
     projectMSDL *app;
         
-    if (!initLoopback())
-		{
-			SDL_Log("Failed to initialize audio loopback devide.");
-			exit(1);
-		}
-
 #if UNLOCK_FPS
     setenv("vblank_mode", "0", 1);
 #endif
@@ -219,7 +213,6 @@ projectMSDL *setupSDLApp() {
     app->toggleFullScreen();
 #endif
     enableGLDebugOutput();
-    configureLoopback(app);
 
     // INFO: Found audio capture device 0: Monitor of GA102 High Definition Audio Controller Digital Stereo (HDMI)
     // INFO: Found audio capture device 1: Monitor of FIFINE K678 Microphone Analog Stereo
@@ -228,7 +221,11 @@ projectMSDL *setupSDLApp() {
     // INFO: Found audio capture device 4: Starship/Matisse HD Audio Controller Analog Stereo
     // INFO: Found audio capture device 5: Monitor of henry
     // SDL_AudioInit("Monitor of henry");
-#if !FAKE_AUDIO && !WASAPI_LOOPBACK
+    SDL_version linked;
+    SDL_GetVersion(&linked);
+    SDL_Log("Using SDL version %d.%d.%d\n", linked.major, linked.minor, linked.patch);
+
+#if !FAKE_AUDIO
     // get an audio input device
     if (app->openAudioInput())
         app->beginAudioCapture();

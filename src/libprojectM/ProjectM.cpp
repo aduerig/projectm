@@ -136,7 +136,7 @@ void ProjectM::ThreadWorker()
 
 void ProjectM::RenderFrame()
 {
-    std::cout << "ProjectM::RenderFrame()" << std::endl;
+    // std::cout << "ProjectM::RenderFrame()" << std::endl;
     // Don't render if window area is zero.
     std::cout << m_windowWidth << ", " << m_windowHeight << std::endl;
 
@@ -152,7 +152,7 @@ void ProjectM::RenderFrame()
     std::lock_guard<std::recursive_mutex> guard(m_presetSwitchMutex);
 #endif
 
-    std::cout << "ProjectM::RenderFrame() before if (!m_presetChangeNotified)" << std::endl;
+    // std::cout << "ProjectM::RenderFrame() before if (!m_presetChangeNotified)" << std::endl;
 
     // Check if the preset isn't locked, and we've not already notified the user
     if (!m_presetChangeNotified)
@@ -171,22 +171,22 @@ void ProjectM::RenderFrame()
             PresetSwitchRequestedEvent(true);
         }
     }
-    std::cout << "ProjectM::RenderFrame() before if (!m_activePreset)" << std::endl;
+    // std::cout << "ProjectM::RenderFrame() before if (!m_activePreset)" << std::endl;
     // If no preset is active, load the idle preset.
     if (!m_activePreset)
     {
-        std::cout << "ProjectM::RenderFrame() no active preset" << std::endl;
+        // std::cout << "ProjectM::RenderFrame() no active preset" << std::endl;
         LoadIdlePreset();
         if (!m_activePreset)
         {
-            std::cout << "ProjectM::RenderFrame() no active preset AND load idle failed" << std::endl;
+            // std::cout << "ProjectM::RenderFrame() no active preset AND load idle failed" << std::endl;
             return;
         }
 
         m_activePreset->Initialize(GetRenderContext());
     }
 
-    std::cout << "ProjectM::RenderFrame() before m_timeKeeper->IsSmoothing()" << std::endl;
+    // std::cout << "ProjectM::RenderFrame() before m_timeKeeper->IsSmoothing()" << std::endl;
     // ToDo: Encapsulate preset loading check and transition in Renderer?
     if (m_timeKeeper->IsSmoothing() && m_transitioningPreset != nullptr)
     {
@@ -204,7 +204,7 @@ void ProjectM::RenderFrame()
         }
     }
 
-    std::cout << "ProjectM::RenderFrame() before calling actual RenderFrame" << std::endl;
+    // std::cout << "ProjectM::RenderFrame() before calling actual RenderFrame" << std::endl;
     // ToDo: Call the to-be-implemented render method in Renderer
     m_activePreset->RenderFrame(m_beatDetect->GetFrameAudioData(), GetRenderContext());
 
@@ -225,7 +225,6 @@ void ProjectM::Initialize()
     /** We need to initialise this before the builtin param db otherwise bass/mid etc won't bind correctly */
     assert(!m_beatDetect);
 
-    std::cout << "ProjectM::Initialize() before std::make_unique<libprojectM::Audio::BeatDetect>(m_pcm);" << std::endl;
     m_beatDetect = std::make_unique<libprojectM::Audio::BeatDetect>(m_pcm);
 
     m_renderer = std::make_unique<Renderer>(m_windowWidth, m_windowHeight);
@@ -237,11 +236,9 @@ void ProjectM::Initialize()
     /* Set the seed to the current time in seconds */
     srand(time(nullptr));
 
-    std::cout << "ProjectM::Initialize() before ResetEngine()" << std::endl;
     ResetEngine();
     LoadIdlePreset();
 
-    std::cout << "ProjectM::Initialize() before m_workerSync->Reset();" << std::endl;
 #if PROJECTM_USE_THREADS
     m_workerSync->Reset();
     m_workerThread = std::thread(&ProjectM::ThreadWorker, this);
@@ -252,7 +249,6 @@ void ProjectM::Initialize()
 
 void ProjectM::LoadIdlePreset()
 {
-    std::cout << "ProjectM::LoadIdlePreset" << std::endl;
     LoadPresetFile("idle://Geiss & Sperl - Feedback (projectM idle HDR mix).milk", false);
     assert(m_activePreset);
 }

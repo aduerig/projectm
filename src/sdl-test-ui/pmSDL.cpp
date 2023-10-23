@@ -325,10 +325,6 @@ void projectMSDL::init(SDL_Window* window, const bool _renderToTexture)
 {
     _sdlWindow = window;
     projectm_set_window_size(_projectM, _width, _height);
-
-#ifdef WASAPI_LOOPBACK
-    wasapi = true;
-#endif
 }
 
 std::string projectMSDL::getActivePresetName()

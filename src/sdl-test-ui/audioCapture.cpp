@@ -40,6 +40,7 @@ int projectMSDL::initAudioInput() {
 }
 
 void projectMSDL::audioInputCallbackF32(void *userdata, unsigned char *stream, int len) {
+    std::cout << "audioInputCallbackF32" << std::endl;
     projectMSDL *app = (projectMSDL *) userdata;
 //    printf("\nLEN: %i\n", len);
 //    for (int i = 0; i < 64; i++)
@@ -99,19 +100,15 @@ int projectMSDL::toggleAudioInput() {
 int projectMSDL::openAudioInput() {
     fakeAudio = false; // if we are opening an audio input then there is no need for fake audio.
     // get audio driver name (static)
-#ifdef DEBUG
     const char* driver_name = SDL_GetCurrentAudioDriver();
     SDL_Log("Using audio driver: %s\n", driver_name);
-#endif
 
     // get audio input device
     _numAudioDevices = SDL_GetNumAudioDevices(true);  // capture, please
 
-#ifdef DEBUG
     for (unsigned int i = 0; i < _numAudioDevices; i++) {
         SDL_Log("Found audio capture device %d: %s", i, SDL_GetAudioDeviceName(i, true));
     }
-#endif
 
     // We start with the system default capture device (index -1).
     // Note: this might work even if NumAudioDevices == 0 (example: if only a

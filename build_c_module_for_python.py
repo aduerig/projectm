@@ -28,7 +28,6 @@ release_mode = 'release'
 
 print_cyan(f'building with {release_mode=}, {this_file_directory=}')
 
-extra_link_args = []
 src_folder = this_file_directory.joinpath('src')
 src_libprojectM_folder = src_folder.joinpath('libprojectM')
 
@@ -72,13 +71,14 @@ sources = [
     str(this_file_directory.joinpath('my_sdl.cpp')),
 ]
 
+extra_link_args = []
 the_module = Extension(
     'winamp_visual',
     sources=sources,
     include_dirs=include_dirs,
     library_dirs=library_dirs,
     # tries to do a .so (dynamic) build with this
-    libraries = ['projectM-4', 'GL'],
+    libraries = ['projectM-4', 'GL', 'SDL2', 'SDL2main', 'dl', 'asound', 'pulse-simple', 'pulse', 'm', 'X11', 'Xext', 'Xcursor', 'Xinerama', 'Xi', 'Xrandr', 'Xss', 'Xxf86vm', 'pthread', 'rt'], # EGL
     extra_compile_args=extra_compile_args,
     extra_link_args=extra_link_args,
 )

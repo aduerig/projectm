@@ -41,14 +41,9 @@
 
 // projectM SDL
 #include "audioCapture.hpp"
-#include "loopback.hpp"
 #include "opengl.h"
 #include "setup.hpp"
 
-
-#if defined _MSC_VER
-#include <direct.h>
-#endif
 
 #include <fstream>
 #include <glm/gtc/matrix_transform.hpp>
@@ -56,21 +51,6 @@
 #include <iostream>
 #include <string>
 #include <sys/stat.h>
-
-#ifdef WASAPI_LOOPBACK
-#include <audioclient.h>
-#include <avrt.h>
-#include <functiondiscoverykeys_devpkey.h>
-#include <mmdeviceapi.h>
-#include <mmsystem.h>
-#include <stdio.h>
-#include <windows.h>
-
-#define LOG(format, ...) wprintf(format L"\n", __VA_ARGS__)
-#define ERR(format, ...) LOG(L"Error: " format, __VA_ARGS__)
-
-#endif /** WASAPI_LOOPBACK */
-
 #include <SDL2/SDL.h>
 
 

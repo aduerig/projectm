@@ -50,9 +50,7 @@ static int mainLoop(void *userData) {
     
     while (! app->done) {
         app->renderFrame();
-        
-        processLoopbackFrame(app);
-        
+                
 #if UNLOCK_FPS
         advanceUnlockedFPSCounterFrame(start);
 #else

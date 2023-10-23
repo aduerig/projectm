@@ -77,7 +77,7 @@ void MilkdropPreset::Initialize(const RenderContext& renderContext)
 
 void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audioData, const RenderContext& renderContext)
 {
-    std::cout << "andrew: milkdrop: RenderFrame" << std::endl;
+    // std::cout << "andrew: milkdrop: RenderFrame" << std::endl;
 
     m_state.audioData = audioData;
     m_state.renderContext = renderContext;
@@ -196,7 +196,8 @@ void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audio
     ss << "Dimensions: " << renderContext.viewportSizeX << " x " << renderContext.viewportSizeY << ", Preset: " << m_absolutePath << std::endl;
     std::cout << ss.str();
 
-    std::cout << "\033[" << renderContext.viewportSizeY + 1 << "A";
+    std::cout << "\033[" << renderContext.viewportSizeY + 3 << "A" << std::endl;
+    // std::cout << "LINE" << std::endl;
     // AFTER
 
 
