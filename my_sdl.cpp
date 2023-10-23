@@ -1,0 +1,92 @@
+#include <SDL2/SDL.h>
+
+// Disable LOOPBACK and FAKE audio to enable microphone input
+#define FAKE_AUDIO 0
+
+#define TEST_ALL_PRESETS 0
+#define STEREOSCOPIC_SBS 0
+
+// projectM
+#include <projectM-4/playlist.h>
+#include <projectM-4/projectM.h>
+
+// projectM SDL
+// #include "audioCapture.hpp"
+// #include "loopback.hpp"
+// #include "opengl.h"
+// #include "setup.hpp"
+
+#include <fstream>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <iostream>
+#include <string>
+#include <sys/stat.h>
+
+
+class projectMSDL
+{
+
+public:
+    projectMSDL(SDL_GLContext glCtx, const std::string& presetPath);
+
+    ~projectMSDL();
+
+    void init(SDL_Window* window, const bool renderToTexture = false);
+    int openAudioInput();
+    int toggleAudioInput();
+    int initAudioInput();
+    void beginAudioCapture();
+    void endAudioCapture();
+    void toggleFullScreen();
+    void resize(unsigned int width, unsigned int height);
+    void touch(float x, float y, int pressure, int touchtype = 0);
+    void touchDrag(float x, float y, int pressure);
+    void touchDestroy(float x, float y);
+    void touchDestroyAll();
+    void renderFrame();
+    void pollEvent();
+    bool keymod = false;
+    std::string getActivePresetName();
+    projectm_handle projectM();
+    void setFps(size_t fps);
+    size_t fps() const;
+
+    bool done{false};
+    bool mouseDown{false};
+    bool wasapi{false};    // Used to track if wasapi is currently active. This bool will allow us to run a WASAPI app and still toggle to microphone inputs.
+    bool fakeAudio{false}; // Used to track fake audio, so we can turn it off and on.
+    bool stretch{false};   // used for toggling stretch mode
+
+    SDL_GLContext _openGlContext{nullptr};
+
+private:
+    static void presetSwitchedEvent(bool isHardCut, uint32_t index, void* context);
+
+    static void audioInputCallbackF32(void* userdata, unsigned char* stream, int len);
+
+    void UpdateWindowTitle();
+
+    void scrollHandler(SDL_Event*);
+    void keyHandler(SDL_Event*);
+
+    projectm_handle _projectM{nullptr};
+    projectm_playlist_handle _playlist{nullptr};
+
+    SDL_Window* _sdlWindow{nullptr};
+    bool _isFullScreen{false};
+    size_t _width{0};
+    size_t _height{0};
+    size_t _fps{60};
+
+    bool _shuffle{true};
+
+    // audio input device characteristics
+    unsigned int _numAudioDevices{0};
+    int _curAudioDevice{0}; // SDL's device indexes are 0-based, -1 means "system default"
+    unsigned short _audioChannelsCount{0};
+    SDL_AudioDeviceID _audioDeviceId{0};
+    int _selectedAudioDevice{0};
+
+    std::string _presetName; //!< Current preset name
+};
