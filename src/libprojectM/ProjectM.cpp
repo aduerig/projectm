@@ -138,7 +138,7 @@ void ProjectM::RenderFrame()
 {
     // std::cout << "ProjectM::RenderFrame()" << std::endl;
     // Don't render if window area is zero.
-    std::cout << m_windowWidth << ", " << m_windowHeight << std::endl;
+    // std::cout << m_windowWidth << ", " << m_windowHeight << std::endl;
 
     if (m_windowWidth == 0 || m_windowHeight == 0)
     {

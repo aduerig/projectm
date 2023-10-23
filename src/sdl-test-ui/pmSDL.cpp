@@ -151,6 +151,7 @@ void projectMSDL::keyHandler(SDL_Event* sdl_evt)
             break;
 
         case SDLK_LEFT:
+            std::cout << "pmSDL: play previous (left key)" << std::endl;
             projectm_playlist_play_previous(_playlist, true);
             break;
 

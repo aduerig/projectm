@@ -1,6 +1,9 @@
 #include "Playlist.hpp"
 
 #include <algorithm>
+#include <chrono>
+#include <iostream>
+#include <random>
 
 // Fall back to boost if compiler doesn't support C++17
 #include FS_INCLUDE
@@ -238,8 +241,10 @@ auto Playlist::NextPresetIndex() -> size_t
 
 auto Playlist::PreviousPresetIndex() -> size_t
 {
+    std::cout << "Playlist::PreviousPresetIndex()" << std::endl;
     if (m_items.empty())
     {
+       std::cout << "Playlist::PreviousPresetIndex() m_items.empty()" << std::endl;
         throw PlaylistEmptyException();
     }
 

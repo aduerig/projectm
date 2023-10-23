@@ -7,6 +7,8 @@ include(CheckSymbolExists)
 
 project(test_sdl2 LANGUAGES CXX)
 
+# set(PROJECTM_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+# set(PROJECTM_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
 set(PROJECTM_BIN_DIR "." CACHE STRING "Executable installation directory, relative to the install prefix.")
 set(PROJECTM_LIB_DIR "." CACHE STRING "Library installation directory, relative to the install prefix.")
@@ -16,6 +18,14 @@ cmake_dependent_option(BUILD_SHARED_LIBS "Build and install libprojectM as a sha
 cmake_dependent_option(ENABLE_OPENMP "Enable OpenMP support if available" ON "NOT ENABLE_EMSCRIPTEN" OFF)
 cmake_dependent_option(ENABLE_THREADING "Enable multithreading support." ON "NOT ENABLE_EMSCRIPTEN" OFF)
 
+if(ENABLE_SYSTEM_GLM)
+    find_package(GLM REQUIRED)
+else()
+    add_library(GLM::GLM INTERFACE IMPORTED)
+    set_target_properties(GLM::GLM PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/vendor"
+            )
+endif()
 
 add_executable(test_sdl2
         test_sdl.cpp
@@ -24,11 +34,10 @@ add_executable(test_sdl2
 target_link_libraries(test_sdl2
         PRIVATE
         SDL2::SDL2
+        SDL2::SDL2main
+        GLM::GLM
+        ${CMAKE_DL_LIBS}
         )
-        # libprojectM::playlist
-        # GLM::GLM
-        # ${CMAKE_DL_LIBS}
-        # SDL2::SDL2main
 
 
 # Remove -lSDL2 as that is handled by CMake, note the space at the end so it does not replace e.g. -lSDL2main

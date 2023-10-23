@@ -53,17 +53,7 @@
 #include <sys/stat.h>
 #include <SDL2/SDL.h>
 
-
-// DATADIR_PATH should be set by the root Makefile if this is being
-// built with autotools.
-#ifndef DATADIR_PATH
-#ifdef DEBUG
 #define DATADIR_PATH "."
-#pragma warning "DATADIR_PATH is not defined - falling back to ./"
-#else
-#define DATADIR_PATH "/usr/local/share/projectM"
-#endif
-#endif
 
 class projectMSDL
 {

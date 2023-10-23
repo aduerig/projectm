@@ -40,7 +40,7 @@ int projectMSDL::initAudioInput() {
 }
 
 void projectMSDL::audioInputCallbackF32(void *userdata, unsigned char *stream, int len) {
-    std::cout << "audioInputCallbackF32" << std::endl;
+    // std::cout << "audioInputCallbackF32" << std::endl;
     projectMSDL *app = (projectMSDL *) userdata;
 //    printf("\nLEN: %i\n", len);
 //    for (int i = 0; i < 64; i++)

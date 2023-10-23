@@ -1,4 +1,5 @@
 build_logs/
+test_sdl_audio/vendor
 
 CMakeCache.txt
 CMakeFiles

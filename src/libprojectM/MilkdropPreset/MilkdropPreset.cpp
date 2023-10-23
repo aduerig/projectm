@@ -177,26 +177,26 @@ void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audio
                       GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
 
-    GLubyte* andrew_pixels = new GLubyte[3 * renderContext.viewportSizeX * renderContext.viewportSizeY];
-    glReadPixels(0, 0, renderContext.viewportSizeX, renderContext.viewportSizeY, GL_RGB, GL_UNSIGNED_BYTE, andrew_pixels);
+    // GLubyte* andrew_pixels = new GLubyte[3 * renderContext.viewportSizeX * renderContext.viewportSizeY];
+    // glReadPixels(0, 0, renderContext.viewportSizeX, renderContext.viewportSizeY, GL_RGB, GL_UNSIGNED_BYTE, andrew_pixels);
     
 
-    std::stringstream ss;
-    for (int y = 0; y < renderContext.viewportSizeY; y++) {
-        for (int x = 0; x < renderContext.viewportSizeX; x++) {
-            int index = (y * renderContext.viewportSizeX + x) * 3;
-            int r = andrew_pixels[index];
-            int g = andrew_pixels[index + 1];
-            int b = andrew_pixels[index + 2];
-            ss << "\033[48;2;" << r << ";" << g << ";" << b << "m  \033[0m";
-        }
-        ss << std::endl;
-    }
+    // std::stringstream ss;
+    // for (int y = 0; y < renderContext.viewportSizeY; y++) {
+    //     for (int x = 0; x < renderContext.viewportSizeX; x++) {
+    //         int index = (y * renderContext.viewportSizeX + x) * 3;
+    //         int r = andrew_pixels[index];
+    //         int g = andrew_pixels[index + 1];
+    //         int b = andrew_pixels[index + 2];
+    //         ss << "\033[48;2;" << r << ";" << g << ";" << b << "m  \033[0m";
+    //     }
+    //     ss << std::endl;
+    // }
 
-    ss << "Dimensions: " << renderContext.viewportSizeX << " x " << renderContext.viewportSizeY << ", Preset: " << m_absolutePath << std::endl;
-    std::cout << ss.str();
+    // ss << "Dimensions: " << renderContext.viewportSizeX << " x " << renderContext.viewportSizeY << ", Preset: " << m_absolutePath << std::endl;
+    // std::cout << ss.str();
 
-    std::cout << "\033[" << renderContext.viewportSizeY + 3 << "A" << std::endl;
+    // std::cout << "\033[" << renderContext.viewportSizeY + 3 << "A" << std::endl;
     // std::cout << "LINE" << std::endl;
     // AFTER
 
