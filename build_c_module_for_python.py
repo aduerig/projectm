@@ -13,12 +13,12 @@ this_file_directory = pathlib.Path(__file__).parent.resolve()
 sys.path.insert(0, str(this_file_directory))
 from helpers import *
 
-release_mode = 'release'
-if '--release' in sys.argv:
-    del sys.argv[sys.argv.index('--release')]
+release_mode = 'debug'
 if '--debug' in sys.argv:
-    release_mode = 'debug'
     del sys.argv[sys.argv.index('--debug')]
+if '--release' in sys.argv:
+    release_mode = 'release'
+    del sys.argv[sys.argv.index('--release')]
 
 print_cyan(f'building with {release_mode=}, {this_file_directory=}')
 

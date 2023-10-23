@@ -1,8 +1,8 @@
-# python build_c_module_for_python.py build --build-lib=. && LD_LIBRARY_PATH=. python test_winamp_visual.py
+# python build_c_module_for_python.py build --build-lib=. && LD_LIBRARY_PATH=src/libprojectM python test_winamp_visual.py
 
 
 # full
-# rm CMakeCache.txt; cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF -DENABLE_SDL_UI=ON && cmake --build . -- -j && python build_c_module_for_python.py build --build-lib=. && LD_LIBRARY_PATH=. python test_winamp_visual.py
+# rm CMakeCache.txt; cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_SDL_UI=ON && cmake --build . -- -j && python build_c_module_for_python.py build --build-lib=. && LD_LIBRARY_PATH=src/libprojectM/libprojectM python test_winamp_visual.py
 
 
 
