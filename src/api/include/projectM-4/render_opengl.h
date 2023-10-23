@@ -43,7 +43,8 @@ PROJECTM_EXPORT void projectm_opengl_render_frame(projectm_handle instance);
 
 PROJECTM_EXPORT void projectm_print_to_terminal(projectm_handle instance);
 
-PROJECTM_EXPORT void projectm_load_to_numpy_arr(projectm_handle instance);
+PROJECTM_EXPORT void projectm_get_grab_width(projectm_handle instance);
+
 
 #ifdef __cplusplus
 } // extern "C"

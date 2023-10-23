@@ -12,6 +12,7 @@ public:
 
     int grab_height = 32; 
     int grab_width = 20;
+    // !TODO MAYBE LEAK HERE?
     GLubyte* andrew_pixels = new GLubyte[3 * grab_width * grab_height];
 
     /**

@@ -205,6 +205,7 @@ void ProjectM::PrintToTerminal()
     m_activePreset->PrintToTerminal(GetRenderContext());
 }
 
+
 void ProjectM::Initialize()
 {
     /** Initialise start time */
