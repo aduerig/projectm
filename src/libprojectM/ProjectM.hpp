@@ -116,6 +116,8 @@ public:
 
     void RenderFrame();
 
+    void PrintToTerminal();
+
     void SetBeatSensitivity(float sensitivity);
 
     auto GetBeatSensitivity() const -> float;

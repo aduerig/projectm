@@ -25,10 +25,11 @@ winamp_visual.setup_winamp()
 
 preset_path = this_file_directory.joinpath('presets', 'tests', '001-line.milk')
 print(f'Python: {preset_path}')
-# winamp_visual.load_preset(str(preset_path))
+winamp_visual.load_preset(str(preset_path))
 
 
 # runs 24 times a second
 while True:
     winamp_visual.render_frame()
+    winamp_visual.print_to_terminal()
     time.sleep(1/24)

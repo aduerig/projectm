@@ -78,6 +78,7 @@ public:
      */
     void RenderFrame(const libprojectM::Audio::FrameAudioData& audioData,
                      const RenderContext& renderContext) override;
+    void PrintToTerminal(const RenderContext& renderContext);
 
 private:
     void PerFrameUpdate();
@@ -99,6 +100,8 @@ private:
 
     std::string m_absoluteFilePath; //!< The absolute file path of the MilkdropPreset
     std::string m_absolutePath;     //!< The absolute path of the MilkdropPreset
+
+
 
     Framebuffer m_framebuffer{2};                           //!< Preset rendering framebuffer with two surfaces (last frame and current frame).
     int m_currentFrameBuffer{0};                            //!< Framebuffer ID of the current frame.

@@ -46,6 +46,10 @@ void projectMSDL::audioInputCallbackF32(void *userdata, unsigned char *stream, i
 //    for (int i = 0; i < 64; i++)
 //        printf("%X ", stream[i]);
     // stream is (i think) samples*channels floats (native byte order) of len BYTES
+
+    // !TODO look into this
+    // projectm_pcm_add_float(app->_projectM, reinterpret_cast<float*>(stream), len/sizeof(float)/2, PROJECTM_STEREO);
+
     if (app->_audioChannelsCount == 1)
         projectm_pcm_add_float(app->_projectM, reinterpret_cast<float*>(stream), len/sizeof(float)/2, PROJECTM_MONO);
     else if (app->_audioChannelsCount == 2)
@@ -84,12 +88,10 @@ int projectMSDL::openAudioInput() {
     fakeAudio = false; // if we are opening an audio input then there is no need for fake audio.
     // get audio driver name (static)
     const char* driver_name = SDL_GetCurrentAudioDriver();
-    std::cout << "python/c++: Using audio driver: " << driver_name << SDL_GetError() << std::endl;
-
+    SDL_Log("Using audio driver: %s\n", driver_name);
 
     // get audio input device
     _numAudioDevices = SDL_GetNumAudioDevices(true);  // capture, please
-    std::cout << "python/c++: Found " << _numAudioDevices << " audio capture devices" << std::endl;
 
     for (unsigned int i = 0; i < _numAudioDevices; i++) {
         SDL_Log("Found audio capture device %d: %s", i, SDL_GetAudioDeviceName(i, true));

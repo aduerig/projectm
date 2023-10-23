@@ -29,6 +29,25 @@ winamp_visual_systemcall(PyObject* self, PyObject* args) {
 }
 
 
+projectm_handle _projectM{nullptr};
+projectm_playlist_handle _playlist{nullptr};
+void audioInputCallbackF32(void *userdata, unsigned char *stream, int len) {
+    // projectm_handle *_projectM = (projectm_handle *) userdata;
+
+    // TODO look into this
+    projectm_pcm_add_float(_projectM, reinterpret_cast<float*>(stream), len/sizeof(float)/2, PROJECTM_STEREO);
+    // projectm_pcm_add_float(_projectM, reinterpret_cast<float*>(stream), len/sizeof(float)/2, PROJECTM_MONO);
+
+    // if (_audioChannelsCount == 1)
+    //     projectm_pcm_add_float(_projectM, reinterpret_cast<float*>(stream), len/sizeof(float)/2, PROJECTM_MONO);
+    // else if (_audioChannelsCount == 2)
+    //     projectm_pcm_add_float(_projectM, reinterpret_cast<float*>(stream), len/sizeof(float)/2, PROJECTM_STEREO);
+    // else {
+    //     SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Multichannel audio not supported");
+    //     SDL_Quit();
+    // }
+}
+
 
 
 int initAudioInput(int selected_device) {
@@ -41,8 +60,8 @@ int initAudioInput(int selected_device) {
     want.format = AUDIO_F32;  // float
     want.channels = 2;  // mono might be better?
     want.samples = want.freq / 60;
-    // want.callback = projectMSDL::audioInputCallbackF32;
-    // want.userdata = this;
+    want.callback = audioInputCallbackF32;
+    want.userdata = _projectM;
 
     // index -1 means "system deafult", which is used if we pass deviceName == NULL
     const char *deviceName = selected_device == -1 ? NULL : SDL_GetAudioDeviceName(selected_device, true);
@@ -94,19 +113,23 @@ void openAudioInput() {
     }
 
     int device_id_to_open = 3; // henry monitor on andrew arch linux
-    int actual_device_opened = initAudioInput(device_id_to_open);
-    if (actual_device_opened != -1) {
+    int actual_audio_device_id_opened = initAudioInput(device_id_to_open);
+    if (actual_audio_device_id_opened != -1) {
         std::cout << "python/c++: Opened audio capture device" << std::endl;
-        SDL_PauseAudioDevice(actual_device_opened, false);
+        SDL_PauseAudioDevice(actual_audio_device_id_opened, false);
     }
     else {
         std::cout << "python/c++: Failed to open audio capture device" << std::endl;
     }
 }
 
+// when it ends...
+// void endAudioCapture() {
+//     SDL_PauseAudioDevice(_audioDeviceId, true);
+//     SDL_CloseAudioDevice(_audioDeviceId);
+// }
 
-projectm_handle _projectM{nullptr};
-projectm_playlist_handle _playlist{nullptr};
+
 static PyObject*
 winamp_visual_setup_winamp(PyObject* self, PyObject* args) {
 
@@ -192,11 +215,18 @@ winamp_visual_render_frame(PyObject* self, PyObject* args) {
     return Py_BuildValue("");
 }
 
+static PyObject*
+winamp_visual_print_to_terminal(PyObject* self, PyObject* args) {
+    projectm_print_to_terminal(_projectM);
+    return Py_BuildValue("");
+}
+
 static PyMethodDef winamp_visual_methods[] = {
     {"systemcall",  winamp_visual_systemcall, METH_VARARGS, ""},
     {"setup_winamp", winamp_visual_setup_winamp, METH_VARARGS, ""},
     {"load_preset", winamp_visual_load_preset, METH_VARARGS, ""},
     {"render_frame", winamp_visual_render_frame, METH_VARARGS, ""},
+    {"print_to_terminal", winamp_visual_print_to_terminal, METH_VARARGS, ""},
 };
 
 static struct PyModuleDef winamp_visualmodule = {

@@ -169,6 +169,12 @@ void projectm_opengl_render_frame(projectm_handle instance)
     projectMInstance->RenderFrame();
 }
 
+void projectm_print_to_terminal(projectm_handle instance)
+{
+    auto projectMInstance = handle_to_instance(instance);
+    projectMInstance->PrintToTerminal();
+}
+
 void projectm_set_beat_sensitivity(projectm_handle instance, float sensitivity)
 {
     auto projectMInstance = handle_to_instance(instance);

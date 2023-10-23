@@ -10,6 +10,10 @@ class Preset
 public:
     virtual ~Preset() = default;
 
+    int grab_height = 32; 
+    int grab_width = 20;
+    GLubyte* andrew_pixels = new GLubyte[3 * grab_width * grab_height];
+
     /**
      * @brief Initializes additional preset resources.
      * @param renderContext A render context with the initial data.
@@ -23,6 +27,8 @@ public:
      */
     virtual void RenderFrame(const libprojectM::Audio::FrameAudioData& audioData,
                              const RenderContext& renderContext) = 0;
+
+    virtual void PrintToTerminal(const RenderContext& renderContext) = 0;
 
     inline void SetFilename(const std::string& filename)
     {

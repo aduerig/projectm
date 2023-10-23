@@ -136,10 +136,6 @@ void ProjectM::ThreadWorker()
 
 void ProjectM::RenderFrame()
 {
-    // std::cout << "ProjectM::RenderFrame()" << std::endl;
-    // Don't render if window area is zero.
-    // std::cout << m_windowWidth << ", " << m_windowHeight << std::endl;
-
     if (m_windowWidth == 0 || m_windowHeight == 0)
     {
         return;
@@ -151,8 +147,6 @@ void ProjectM::RenderFrame()
 #if PROJECTM_USE_THREADS
     std::lock_guard<std::recursive_mutex> guard(m_presetSwitchMutex);
 #endif
-
-    // std::cout << "ProjectM::RenderFrame() before if (!m_presetChangeNotified)" << std::endl;
 
     // Check if the preset isn't locked, and we've not already notified the user
     if (!m_presetChangeNotified)
@@ -171,22 +165,18 @@ void ProjectM::RenderFrame()
             PresetSwitchRequestedEvent(true);
         }
     }
-    // std::cout << "ProjectM::RenderFrame() before if (!m_activePreset)" << std::endl;
     // If no preset is active, load the idle preset.
     if (!m_activePreset)
     {
-        // std::cout << "ProjectM::RenderFrame() no active preset" << std::endl;
         LoadIdlePreset();
         if (!m_activePreset)
         {
-            // std::cout << "ProjectM::RenderFrame() no active preset AND load idle failed" << std::endl;
             return;
         }
 
         m_activePreset->Initialize(GetRenderContext());
     }
 
-    // std::cout << "ProjectM::RenderFrame() before m_timeKeeper->IsSmoothing()" << std::endl;
     // ToDo: Encapsulate preset loading check and transition in Renderer?
     if (m_timeKeeper->IsSmoothing() && m_transitioningPreset != nullptr)
     {
@@ -204,11 +194,15 @@ void ProjectM::RenderFrame()
         }
     }
 
-    // std::cout << "ProjectM::RenderFrame() before calling actual RenderFrame" << std::endl;
     // ToDo: Call the to-be-implemented render method in Renderer
     m_activePreset->RenderFrame(m_beatDetect->GetFrameAudioData(), GetRenderContext());
 
     m_frameCount++;
+}
+
+void ProjectM::PrintToTerminal()
+{
+    m_activePreset->PrintToTerminal(GetRenderContext());
 }
 
 void ProjectM::Initialize()

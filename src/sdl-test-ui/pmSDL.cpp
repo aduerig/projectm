@@ -40,7 +40,7 @@ void projectMSDL::keyHandler(SDL_Event* sdl_evt)
     // handle keyboard input (for our app first, then projectM)
     switch (sdl_keycode)
     {
-        std::cout << sdl_keycode << std::endl;
+        // std::cout << sdl_keycode << std::endl;
         case SDLK_q:
             if (sdl_mod & KMOD_LGUI || sdl_mod & KMOD_RGUI || sdl_mod & KMOD_LCTRL)
             {
@@ -215,6 +215,7 @@ void projectMSDL::touchDestroyAll()
 
 void projectMSDL::renderFrame()
 {
+    // projectm_print_to_terminal(_projectM);
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
