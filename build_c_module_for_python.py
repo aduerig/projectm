@@ -3,7 +3,6 @@
 # windows?
     # called by: python .\driver\build_c_module_for_python.py build --compiler=mingw32
 
-import shutil
 from setuptools import setup, Extension
 import sys
 import pathlib
@@ -13,12 +12,12 @@ this_file_directory = pathlib.Path(__file__).parent.resolve()
 sys.path.insert(0, str(this_file_directory))
 from helpers import *
 
-release_mode = 'debug'
-if '--debug' in sys.argv:
-    del sys.argv[sys.argv.index('--debug')]
-if '--release' in sys.argv:
-    release_mode = 'release'
-    del sys.argv[sys.argv.index('--release')]
+release_mode = 'release'
+# if '--debug' in sys.argv:
+#     del sys.argv[sys.argv.index('--debug')]
+# if '--release' in sys.argv:
+#     release_mode = 'release'
+#     del sys.argv[sys.argv.index('--release')]
 
 print_cyan(f'building with {release_mode=}, {this_file_directory=}')
 
@@ -46,7 +45,7 @@ if release_mode == 'debug':
 include_dir_api_1 = this_file_directory.joinpath('src', 'api', 'include')
 include_dir_api_2 = this_file_directory.joinpath('src', 'playlist', 'api')
 include_dir_api_3 = this_file_directory.joinpath('src', 'playlist', 'include')
-include_dir_api_3 = this_file_directory.joinpath('src', 'playlist', 'include')
+include_dir_api_4 = this_file_directory.joinpath('src', 'api', 'include', 'projectM-4')
 
 include_dirs = [
     str(src_folder),
@@ -55,6 +54,7 @@ include_dirs = [
     str(include_dir_api_1),
     str(include_dir_api_2),
     str(include_dir_api_3),
+    str(include_dir_api_4),
 ]
 library_dirs = [
     str(src_libprojectM_folder),
@@ -71,7 +71,7 @@ the_module = Extension(
     include_dirs=include_dirs,
     library_dirs=library_dirs,
     # tries to do a .so (dynamic) build with this
-    # libraries = ['ShumiChess'],
+    libraries = ['projectM-4'],
     # remove if shared
     # libraries=['GL'],
     extra_compile_args=extra_compile_args,

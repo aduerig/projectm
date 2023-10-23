@@ -41,7 +41,9 @@ ProjectM::ProjectM()
     , m_workerSync(std::make_unique<BackgroundWorkerSync>())
 #endif
 {
+    std::cout << "ProjectM::ProjectM() before" << std::endl;
     Initialize();
+    std::cout << "ProjectM::ProjectM() after" << std::endl;
 }
 
 ProjectM::~ProjectM()
@@ -214,6 +216,7 @@ void ProjectM::Initialize()
     /** We need to initialise this before the builtin param db otherwise bass/mid etc won't bind correctly */
     assert(!m_beatDetect);
 
+    std::cout << "ProjectM::Initialize() before std::make_unique<libprojectM::Audio::BeatDetect>(m_pcm);" << std::endl;
     m_beatDetect = std::make_unique<libprojectM::Audio::BeatDetect>(m_pcm);
 
     m_renderer = std::make_unique<Renderer>(m_windowWidth, m_windowHeight);
@@ -225,9 +228,11 @@ void ProjectM::Initialize()
     /* Set the seed to the current time in seconds */
     srand(time(nullptr));
 
+    std::cout << "ProjectM::Initialize() before ResetEngine()" << std::endl;
     ResetEngine();
     LoadIdlePreset();
 
+    std::cout << "ProjectM::Initialize() before m_workerSync->Reset();" << std::endl;
 #if PROJECTM_USE_THREADS
     m_workerSync->Reset();
     m_workerThread = std::thread(&ProjectM::ThreadWorker, this);
