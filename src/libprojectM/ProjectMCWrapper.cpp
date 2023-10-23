@@ -168,8 +168,10 @@ char* projectm_get_vcs_version_string()
 
 void projectm_opengl_render_frame(projectm_handle instance)
 {
+    std::cout << "ProjectMCWrapper: projectm_opengl_render_frame before" << std::endl;
     auto projectMInstance = handle_to_instance(instance);
     projectMInstance->RenderFrame();
+    std::cout << "ProjectMCWrapper: projectm_opengl_render_frame after" << std::endl;
 }
 
 void projectm_set_beat_sensitivity(projectm_handle instance, float sensitivity)

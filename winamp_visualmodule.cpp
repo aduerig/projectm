@@ -35,8 +35,10 @@ projectm_handle _projectM{nullptr};
 projectm_playlist_handle _playlist{nullptr};
 static PyObject*
 winamp_visual_setup_winamp(PyObject* self, PyObject* args) {
+
     std::cout << "C++ - Python Extension: setting up winamp" << std::endl;
     _projectM = projectm_create();
+    projectm_set_window_size(_projectM, 20, 32);
     std::cout << "C++ - Python Extension: after up winamp" << std::endl;
     return Py_BuildValue("");
 }
@@ -63,7 +65,9 @@ winamp_visual_load_preset(PyObject* self, PyObject* args) {
 
 static PyObject*
 winamp_visual_render_frame(PyObject* self, PyObject* args) {
+    cout << "C++ - Python Extension: before rendering frame" << endl;
     projectm_opengl_render_frame(_projectM);
+    cout << "C++ - Python Extension: after rendering frame" << endl;
     return Py_BuildValue("");
 }
 
