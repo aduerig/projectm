@@ -77,7 +77,7 @@ void openAudioInput() {
     std::cout << "python/c++: Using audio driver: " << driver_name << SDL_GetError() << std::endl;
 
 
-    unsigned int _numAudioDevices = SDL_GetNumAudioDevices(true);  // capture, please
+    unsigned int _numAudioDevices = SDL_GetNumAudioDevices(true);
     std::cout << "python/c++: Found " << _numAudioDevices << " audio capture devices" << std::endl;
     for (unsigned int i = 0; i < _numAudioDevices; i++) {
         std::cout << "python/c++: Found audio capture device: " << i << ", " << SDL_GetAudioDeviceName(i, true) << std::endl;
@@ -93,7 +93,8 @@ void openAudioInput() {
 
     }
 
-    int actual_device_opened = initAudioInput(4);
+    int device_id_to_open = 3; // henry monitor on andrew arch linux
+    int actual_device_opened = initAudioInput(device_id_to_open);
     if (actual_device_opened != -1) {
         std::cout << "python/c++: Opened audio capture device" << std::endl;
         SDL_PauseAudioDevice(actual_device_opened, false);
@@ -102,8 +103,6 @@ void openAudioInput() {
         std::cout << "python/c++: Failed to open audio capture device" << std::endl;
     }
 }
-
-
 
 
 projectm_handle _projectM{nullptr};
@@ -115,10 +114,10 @@ winamp_visual_setup_winamp(PyObject* self, PyObject* args) {
     _projectM = projectm_create();
     projectm_set_window_size(_projectM, 32, 20);
 
-    SDL_SetHint(SDL_HINT_AUDIO_INCLUDE_MONITORS, "1");
 
 
     // SDL 
+    SDL_SetHint(SDL_HINT_AUDIO_INCLUDE_MONITORS, "1"); // this allows listening to speakers
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
         SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
