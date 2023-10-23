@@ -1,5 +1,12 @@
 # python build_c_module_for_python.py build --build-lib=.
     # puts so in current directory
+
+
+# rm winamp_visual.cpython-311-x86_64-linux-gnu.so; python build_c_module_for_python.py build --build-lib=. && LD_LIBRARY_PATH=src/libprojectM python test_winamp_visual.py
+
+# LD_LIBRARY_PATH=src/libprojectM ld winamp_visual.cpython-311-x86_64-linux-gnu.so
+
+
 # windows?
     # called by: python .\driver\build_c_module_for_python.py build --compiler=mingw32
 
@@ -36,7 +43,7 @@ src_libprojectM_folder = src_folder.joinpath('libprojectM')
 vendor_folder = this_file_directory.joinpath('vendor')
 # glm_folder = vendor_folder.joinpath('glm')
 
-extra_compile_args=['-std=c++17']
+extra_compile_args=['-std=c++14']
 if release_mode == 'debug':
     extra_compile_args += ['-g', '-O0']
 # else:
@@ -71,9 +78,7 @@ the_module = Extension(
     include_dirs=include_dirs,
     library_dirs=library_dirs,
     # tries to do a .so (dynamic) build with this
-    libraries = ['projectM-4'],
-    # remove if shared
-    # libraries=['GL'],
+    libraries = ['projectM-4', 'GL'],
     extra_compile_args=extra_compile_args,
     extra_link_args=extra_link_args,
 )

@@ -40,6 +40,7 @@ MilkdropPreset::MilkdropPreset(const std::string& absoluteFilePath)
     , m_darkenCenter(m_state)
     , m_border(m_state)
 {
+    std::cout << "MilkdropPreset::MilkdropPreset(const std::string& absoluteFilePath)" << std::endl;
     Load(absoluteFilePath);
 }
 
@@ -77,7 +78,7 @@ void MilkdropPreset::Initialize(const RenderContext& renderContext)
 void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audioData, const RenderContext& renderContext)
 {
     std::cout << "andrew: milkdrop: RenderFrame" << std::endl;
-    
+
     m_state.audioData = audioData;
     m_state.renderContext = renderContext;
 

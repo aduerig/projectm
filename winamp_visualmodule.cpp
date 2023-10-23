@@ -7,6 +7,8 @@
 #include <ostream>
 #include <iostream>
 #include <utility>
+#include <vector>
+#include <string>
 
 #include "my_sdl.cpp"
 
@@ -48,18 +50,17 @@ static PyObject*
 winamp_visual_load_preset(PyObject* self, PyObject* args) {
     std::cout << "C++ - Python Extension: loading preset" << std::endl;
 
-    // get std::string
     char* preset_path_c_str;
     if(!PyArg_ParseTuple(args, "s", &preset_path_c_str)) {
         return NULL;
     }
     // this crashes???
-    // std::string preset_path(preset_path_c_str);
+    // std::string my_preset_path;
+    // my_preset_path = preset_path_c_str;
+
+    cout << "C++ - Python Extension: before loading preset: " << preset_path_c_str << endl;
 
     projectm_load_preset_file(_projectM, preset_path_c_str, false);
-    // auto projectMInstance = reinterpret_cast<projectMWrapper*>(_projectM);
-    // auto projectMInstance = handle_to_instance(_projectM);
-    // projectMInstance->LoadPresetFile(preset_path, false);
     return Py_BuildValue("");
 }
 

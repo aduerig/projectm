@@ -69,6 +69,7 @@ void PresetFactoryManager::registerFactory(const std::string& extensions, Preset
 
 std::unique_ptr<Preset> PresetFactoryManager::CreatePresetFromFile(const std::string& filename)
 {
+    std::cout << "PresetFactoryManager::CreatePresetFromFile " << filename << std::endl;
     try
     {
         const std::string extension = "." + ParseExtension(filename);
@@ -81,6 +82,7 @@ std::unique_ptr<Preset> PresetFactoryManager::CreatePresetFromFile(const std::st
     }
     catch (const std::exception& e)
     {
+        std::cout << "PresetFactoryManager::CreatePresetFromFile " << e.what() << std::endl;
         throw PresetFactoryException(e.what());
     }
     catch (...)

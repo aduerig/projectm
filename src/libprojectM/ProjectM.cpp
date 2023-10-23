@@ -78,6 +78,7 @@ void ProjectM::LoadPresetFile(const std::string& presetFilename, bool smoothTran
     }
     catch (const PresetFactoryException& ex)
     {
+        std::cout << "LoadPresetFile Error: " << presetFilename << std::endl;
         PresetSwitchFailedEvent(presetFilename, ex.message());
     }
 }
@@ -174,9 +175,11 @@ void ProjectM::RenderFrame()
     // If no preset is active, load the idle preset.
     if (!m_activePreset)
     {
+        std::cout << "ProjectM::RenderFrame() no active preset" << std::endl;
         LoadIdlePreset();
         if (!m_activePreset)
         {
+            std::cout << "ProjectM::RenderFrame() no active preset AND load idle failed" << std::endl;
             return;
         }
 
@@ -284,6 +287,7 @@ void ProjectM::ResetOpenGL(size_t width, size_t height)
 
 void ProjectM::StartPresetTransition(std::unique_ptr<Preset>&& preset, bool hardCut)
 {
+    std::cout << "ProjectM::StartPresetTransition" << std::endl;
     m_presetChangeNotified = m_presetLocked;
 
     if (preset == nullptr)
