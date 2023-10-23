@@ -62,6 +62,7 @@ void ProjectM::PresetSwitchFailedEvent(const std::string&, const std::string&) c
 
 void ProjectM::LoadPresetFile(const std::string& presetFilename, bool smoothTransition)
 {
+    std::cout << "ProjectM::LoadPresetFile: " << presetFilename << std::endl;
     // If already in a transition, force immediate completion.
     if (m_transitioningPreset != nullptr)
     {
@@ -237,6 +238,7 @@ void ProjectM::Initialize()
 
 void ProjectM::LoadIdlePreset()
 {
+    std::cout << "ProjectM::LoadIdlePreset" << std::endl;
     LoadPresetFile("idle://Geiss & Sperl - Feedback (projectM idle HDR mix).milk", false);
     assert(m_activePreset);
 }

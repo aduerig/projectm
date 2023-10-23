@@ -25,12 +25,14 @@ print_cyan(f'building with {release_mode=}, {this_file_directory=}')
 extra_link_args = []
 src_folder = this_file_directory.joinpath('src')
 src_libprojectM_folder = src_folder.joinpath('libprojectM')
-for _, path in get_all_paths(src_libprojectM_folder):
-    if '.so' in path.name:
-    # if '.a' in path.name:
-        final_lib_path = this_file_directory.joinpath(path.name)
-        shutil.copy(path, final_lib_path)
-        extra_link_args.append(str(final_lib_path))
+
+# for copying but just using LD_LIBRARY_PATH for now
+# for _, path in get_all_paths(src_libprojectM_folder):
+#     if '.so' in path.name:
+#     # if '.a' in path.name:
+#         final_lib_path = this_file_directory.joinpath(path.name)
+#         shutil.copy(path, final_lib_path)
+#         extra_link_args.append(str(final_lib_path))
 
 vendor_folder = this_file_directory.joinpath('vendor')
 # glm_folder = vendor_folder.joinpath('glm')

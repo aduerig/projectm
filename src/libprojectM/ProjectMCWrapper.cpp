@@ -79,15 +79,16 @@ void projectm_destroy(projectm_handle instance)
 void projectm_load_preset_file(projectm_handle instance, const char* filename,
                                bool smooth_transition)
 {
-    std::cout << "loading preset file from wrapper" << std::endl;
+    std::cout << "ProjectMCWrapper: projectm_load_preset_file" << std::endl;
     auto projectMInstance = handle_to_instance(instance);
+    std::cout << "ProjectMCWrapper: projectm_load_preset_file after handle_to_instance" << std::endl;
     projectMInstance->LoadPresetFile(filename, smooth_transition);
 }
 
 void projectm_load_preset_data(projectm_handle instance, const char* data,
                                bool smooth_transition)
 {
-    std::cout << "loading preset data from wrapper" << std::endl;
+    std::cout << "ProjectMCWrapper: projectm_load_preset_data" << std::endl;
     std::stringstream presetDataStream(data);
     auto projectMInstance = handle_to_instance(instance);
     projectMInstance->LoadPresetData(presetDataStream, smooth_transition);

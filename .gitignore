@@ -1,5 +1,15 @@
 build_logs/
 
+CMakeCache.txt
+CMakeFiles
+CPackConfig.cmake
+CPackSourceConfig.cmake
+pycache__/
+dummy.cpp
+perf.data
+presets/
+*.so
+vendor/
 xcuserdata
 src/libprojectM/config.inp
 src/libprojectM/config.inp.b
