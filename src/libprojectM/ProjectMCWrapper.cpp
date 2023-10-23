@@ -177,19 +177,18 @@ void projectm_print_to_terminal(projectm_handle instance)
 
 int projectm_get_grab_width(projectm_handle instance) {
     auto projectMInstance = handle_to_instance(instance);
-    projectMInstance->PrintToTerminal();
-
+    return projectMInstance->GetGrabWidth();
 }
 
-// int projectm_get_grab_height(projectm_handle instance) {
-//     auto projectMInstance = handle_to_instance(instance);
-//     projectMInstance->PrintToTerminal();
-// }
+int projectm_get_grab_height(projectm_handle instance) {
+    auto projectMInstance = handle_to_instance(instance);
+    return projectMInstance->GetGrabHeight();
+}
 
-// GLubyte* projectm_get_m_activePreset(projectm_handle instance) {
-//     auto projectMInstance = handle_to_instance(instance);
-//     projectMInstance->PrintToTerminal();
-// }
+GLubyte* projectm_get_andrew_pixels(projectm_handle instance) {
+    auto projectMInstance = handle_to_instance(instance);
+    return projectMInstance->GetAndrewPixels();
+}
 
 void projectm_set_beat_sensitivity(projectm_handle instance, float sensitivity)
 {

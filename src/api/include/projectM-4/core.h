@@ -26,6 +26,7 @@
 #pragma once
 
 #include "projectM-4/types.h"
+#include <GL/gl.h>
 
 #ifdef __cplusplus
 extern "C" {

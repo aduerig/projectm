@@ -43,7 +43,9 @@ PROJECTM_EXPORT void projectm_opengl_render_frame(projectm_handle instance);
 
 PROJECTM_EXPORT void projectm_print_to_terminal(projectm_handle instance);
 
-PROJECTM_EXPORT void projectm_get_grab_width(projectm_handle instance);
+PROJECTM_EXPORT int projectm_get_grab_width(projectm_handle instance);
+PROJECTM_EXPORT int projectm_get_grab_height(projectm_handle instance);
+PROJECTM_EXPORT GLubyte* projectm_get_andrew_pixels(projectm_handle instance);
 
 
 #ifdef __cplusplus

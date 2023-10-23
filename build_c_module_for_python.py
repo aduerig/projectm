@@ -6,6 +6,8 @@
 
 # LD_LIBRARY_PATH=src/libprojectM ld winamp_visual.cpython-311-x86_64-linux-gnu.so
 
+# LD_LIBRARY_PATH=src/libprojectM gdb python
+
 
 # windows?
     # called by: python .\driver\build_c_module_for_python.py build --compiler=mingw32
@@ -42,9 +44,9 @@ src_libprojectM_folder = src_folder.joinpath('libprojectM')
 vendor_folder = this_file_directory.joinpath('vendor')
 # glm_folder = vendor_folder.joinpath('glm')
 
-extra_compile_args=['-std=c++14']
+extra_compile_args=['-std=c++14', '-g']
 if release_mode == 'debug':
-    extra_compile_args += ['-g', '-O0']
+    extra_compile_args += ['-g']
 # else:
 #     extra_compile_args += ['-Ofast']
 
@@ -70,6 +72,14 @@ sources = [
     str(this_file_directory.joinpath('winamp_visualmodule.cpp')),
 ]
 
+
+def get_python_config(flag):
+    return subprocess.check_output(['python-config', flag]).decode('utf-8').strip().split()
+
+python_extra_compile_args = get_python_config('--cflags')
+python_extra_link_args = get_python_config('--ldflags')
+
+# extra_link_args = ['-rpath']
 extra_link_args = []
 the_module = Extension(
     'winamp_visual',
@@ -78,8 +88,8 @@ the_module = Extension(
     library_dirs=library_dirs,
     # tries to do a .so (dynamic) build with this
     libraries = ['projectM-4', 'GL', 'SDL2', 'SDL2main', 'dl', 'asound', 'pulse-simple', 'pulse', 'm', 'X11', 'Xext', 'Xcursor', 'Xinerama', 'Xi', 'Xrandr', 'Xss', 'Xxf86vm', 'pthread', 'rt'], # EGL
-    extra_compile_args=extra_compile_args,
-    extra_link_args=extra_link_args,
+    extra_compile_args=extra_compile_args + python_extra_compile_args,
+    extra_link_args=extra_link_args + python_extra_link_args,
 )
 
 setup(

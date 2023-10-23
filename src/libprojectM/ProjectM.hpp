@@ -118,6 +118,13 @@ public:
 
     void PrintToTerminal();
 
+    int GetGrabWidth();
+
+    int GetGrabHeight();
+
+    GLubyte* GetAndrewPixels();
+
+
     void SetBeatSensitivity(float sensitivity);
 
     auto GetBeatSensitivity() const -> float;

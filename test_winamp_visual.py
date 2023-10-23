@@ -15,21 +15,22 @@ this_file_directory = pathlib.Path(__file__).parent.resolve()
 sys.path.insert(0, str(this_file_directory))
 from helpers import *
 
+print('before import')
 import winamp_visual
+print('after import')
 
-# winamp_visual.systemcall('echo "systemcall!"')
-# winamp_visual.print_from_c('hello!')
+winamp_visual.print_from_c()
 
-winamp_visual.setup_winamp()
-
-
-preset_path = this_file_directory.joinpath('presets', 'tests', '001-line.milk')
-print(f'Python: {preset_path}')
-winamp_visual.load_preset(str(preset_path))
+# winamp_visual.setup_winamp()
 
 
-# runs 24 times a second
-while True:
-    winamp_visual.render_frame()
-    winamp_visual.print_to_terminal()
-    time.sleep(1/24)
+# preset_path = this_file_directory.joinpath('presets', 'tests', '001-line.milk')
+# print(f'Python: {preset_path}')
+# winamp_visual.load_preset(str(preset_path))
+
+
+# # runs 24 times a second
+# while True:
+#     winamp_visual.render_frame()
+#     winamp_visual.print_to_terminal_higher_level()
+#     time.sleep(1/24)

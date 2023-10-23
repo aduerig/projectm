@@ -206,6 +206,20 @@ void ProjectM::PrintToTerminal()
 }
 
 
+int ProjectM::GetGrabWidth() {
+    return m_activePreset->grab_width;
+}
+
+int ProjectM::GetGrabHeight() {
+    return m_activePreset->grab_width;
+}
+
+GLubyte* ProjectM::GetAndrewPixels() {
+    return m_activePreset->andrew_pixels;
+}
+
+
+
 void ProjectM::Initialize()
 {
     /** Initialise start time */
