@@ -13,23 +13,15 @@ add_compile_definitions(
         $<$<CONFIG:DEBUG>:DEBUG>
         )
 
-if(NOT MSVC)
-    enable_cflags_if_supported(
-            -Wall
-            -Wchar-subscripts
-            -Wformat-security
-            -Wpointer-arith
-            -Wshadow
-            -Wsign-compare
-            -Wtype-limits
-    )
-else()
-    enable_cflags_if_supported(
-            /EHsc   # Exception handling support
-            /GR     # RTTI, for dynamic_cast
-            /W4
-    )
-endif()
+enable_cflags_if_supported(
+        -Wall
+        -Wchar-subscripts
+        -Wformat-security
+        -Wpointer-arith
+        -Wshadow
+        -Wsign-compare
+        -Wtype-limits
+)
 
 check_function_exists(aligned_alloc HAVE_ALIGNED_ALLOC)
 check_include_file_cxx("dlfcn.h" HAVE_DLFCN_H)
@@ -46,7 +38,6 @@ check_include_file_cxx("string.h" HAVE_STRING_H)
 check_include_file_cxx("sys/stat.h" HAVE_SYS_STAT_H)
 check_include_file_cxx("sys/types.h" HAVE_SYS_TYPES_H)
 check_include_file_cxx("unistd.h" HAVE_UNISTD_H)
-check_include_file_cxx("windows.h" HAVE_WINDOWS_H)
 
 set(_std_c_headers
         # C89/C90
@@ -84,10 +75,5 @@ file(MAKE_DIRECTORY "${PROJECTM_BINARY_DIR}/include")
 configure_file(config.h.cmake.in "${PROJECTM_BINARY_DIR}/include/config.h")
 include_directories("${PROJECTM_BINARY_DIR}/include")
 
-# Force-include the file in all targets
-if(MSVC)
-    add_definitions(/FI"config.h")
-else()
-    # GCC or Clang
-    add_definitions(-include config.h)
-endif()
+# Force-include the file in all targets (gcc or clang)
+add_definitions(-include config.h)

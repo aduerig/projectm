@@ -1,3 +1,5 @@
+// rm CMakeCache.txt; cmake -DCMAKE_BUILD_TYPE=Release && cmake --build . -- -j && ./test_sdl2
+
 #include <algorithm>
 #include <ostream>
 #include <iostream>
@@ -11,6 +13,25 @@
 
 using namespace std;
 
+
+void audioInputCallbackF32(void *userdata, unsigned char *stream, int len) {
+    std::cout << "audioInputCallbackF32" << std::endl;
+    // projectMSDL *app = (projectMSDL *) userdata;
+    printf("\nLEN: %i\n", len);
+    for (int i = 0; i < 64; i++)
+        printf("%X ", stream[i]);
+    // stream is (i think) samples*channels floats (native byte order) of len BYTES
+    // if (app->_audioChannelsCount == 1)
+    //     projectm_pcm_add_float(app->_projectM, reinterpret_cast<float*>(stream), len/sizeof(float)/2, PROJECTM_MONO);
+    // else if (app->_audioChannelsCount == 2)
+    //     projectm_pcm_add_float(app->_projectM, reinterpret_cast<float*>(stream), len/sizeof(float)/2, PROJECTM_STEREO);
+    // else {
+    //     SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Multichannel audio not supported");
+    //     SDL_Quit();
+    // }
+}
+
+
 int initAudioInput(int selected_device) {
     SDL_AudioSpec want, have;
 
@@ -21,7 +42,7 @@ int initAudioInput(int selected_device) {
     want.format = AUDIO_F32;  // float
     want.channels = 2;  // mono might be better?
     want.samples = want.freq / 60;
-    // want.callback = projectMSDL::audioInputCallbackF32;
+    want.callback = audioInputCallbackF32;
     // want.userdata = this;
 
     // index -1 means "system deafult", which is used if we pass deviceName == NULL
@@ -110,3 +131,23 @@ int main() {
 
     openAudioInput();
 }
+
+
+// real
+// INFO: Using SDL version 2.28.4
+// INFO: Using audio driver: pulseaudio
+// INFO: Found audio capture device 0: Monitor of Starship/Matisse HD Audio Controller Analog Stereo
+// INFO: Found audio capture device 1: Starship/Matisse HD Audio Controller Analog Stereo
+// INFO: Found audio capture device 2: Monitor of GA102 High Definition Audio Controller Digital Stereo (HDMI)
+// INFO: Found audio capture device 3: Monitor of henry
+// INFO: Opened audio capture device index=3 devId=2: Monitor of henry
+
+
+
+// this
+// INFO: Using SDL version 2.28.4
+// python/c++: Using audio driver: pulseaudio
+// python/c++: Found 1 audio capture devices
+// python/c++: Found audio capture device: 0, Starship/Matisse HD Audio Controller Analog Stereo
+// python/c++: WARNING Wasnt able to see the device id: 4
+// python/c++: Failed to open audio capture device

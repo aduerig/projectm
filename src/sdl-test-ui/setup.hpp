@@ -15,15 +15,10 @@ void debugGL(GLenum source,
                const GLchar* message,
              const void* userParam);
 
-std::string getConfigFilePath(std::string datadir_path);
 void seedRand();
 void initGL();
 void dumpOpenGLInfo();
-void initStereoscopicView(SDL_Window *win);
 void enableGLDebugOutput();
-void testAllPresets(projectMSDL *app);
 projectMSDL *setupSDLApp();
-int64_t startUnlockedFPSCounter();
-void advanceUnlockedFPSCounterFrame(int64_t startFrame);
 
 #endif /* setup_hpp */

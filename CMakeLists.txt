@@ -41,7 +41,6 @@ set(PROJECTM_LIB_VERSION "${CMAKE_PROJECT_VERSION}")
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECTM_SOURCE_DIR}/cmake")
 
-include(VCSVersion)
 include(GNUInstallDirs)
 
 set(PROJECTM_BIN_DIR "${CMAKE_INSTALL_BINDIR}" CACHE STRING "Executable installation directory, relative to the install prefix.")
@@ -52,22 +51,17 @@ set(PROJECTM_INCLUDE_DIR "${CMAKE_INSTALL_INCLUDEDIR}" CACHE STRING "Header inst
 set(PROJECTM_DUMMY_SOURCE_FILE "${PROJECTM_BINARY_DIR}/dummy.cpp")
 file(TOUCH "${PROJECTM_DUMMY_SOURCE_FILE}")
 
-set(ENABLE_EMSCRIPTEN OFF CACHE BOOL "Build for web with emscripten. Requires emscripten toolset for building." FORCE)
-
 # Feature options, including dependencies.
-option(BUILD_TESTING "Build the libprojectM test suite" OFF)
-cmake_dependent_option(BUILD_SHARED_LIBS "Build and install libprojectM as a shared libraries. If OFF, builds as static libraries." ON "NOT ENABLE_EMSCRIPTEN" OFF)
+option(BUILD_SHARED_LIBS "Build and install libprojectM as a shared libraries. If OFF, builds as static libraries." ON)
 option(ENABLE_PLAYLIST "Enable building the playlist management library" ON)
-cmake_dependent_option(ENABLE_SDL_UI "Build the SDL2-based developer test UI" OFF "NOT ENABLE_EMSCRIPTEN" OFF)
-cmake_dependent_option(ENABLE_GLES "Enable OpenGL ES support" OFF "NOT ENABLE_EMSCRIPTEN AND NOT CMAKE_SYSTEM_NAME STREQUAL Android" ON)
-cmake_dependent_option(ENABLE_OPENMP "Enable OpenMP support if available" ON "NOT ENABLE_EMSCRIPTEN" OFF)
-cmake_dependent_option(ENABLE_THREADING "Enable multithreading support." ON "NOT ENABLE_EMSCRIPTEN" OFF)
-cmake_dependent_option(ENABLE_INSTALL "Enable installing projectM libraries and headers." OFF "NOT PROJECT_IS_TOP_LEVEL" ON)
+option(ENABLE_SDL_UI "Build the SDL2-based developer test UI" OFF)
+option(ENABLE_OPENMP "Enable OpenMP support if available" ON)
+option(ENABLE_THREADING "Enable multithreading support." ON)
 option(ENABLE_SYSTEM_GLM "Enable use of system-install GLM library" OFF)
+option(ENABLE_GLES "Enable OpenGL ES support" ON)
 
 # Experimental/unsupported features
-cmake_dependent_option(ENABLE_LLVM "Enable experimental LLVM JIT support" OFF "NOT ENABLE_EMSCRIPTEN" OFF)
-option(ENABLE_CXX_INTERFACE "Enable exporting C++ symbols for ProjectM and PCM classes, not only the C API. Warning: This is not very portable." OFF)
+option(ENABLE_LLVM "Enable experimental LLVM JIT support" OFF)
 
 if(ENABLE_SYSTEM_GLM)
     find_package(GLM REQUIRED)
@@ -80,18 +74,11 @@ endif()
 
 if(ENABLE_SDL_UI)
     find_package(SDL2 REQUIRED)
-
-    # Apply some fixes, as SDL2's CMake support is new and still a WiP.
-    include(SDL2Target)
+    # include(SDL2Target)
 endif()
 
 if(ENABLE_GLES)
     message(STATUS "Building for OpenGL Embedded Profile")
-    if(NOT CMAKE_SYSTEM_NAME STREQUAL Linux
-            AND NOT CMAKE_SYSTEM_NAME STREQUAL Android)
-        message(FATAL_ERROR "OpenGL ES 3 support is currently only available for Linux platforms. You're building for ${CMAKE_SYSTEM_NAME}.")
-    endif()
-
     # We use a local find script for OpenGL::GLES3 until the proposed changes are merged upstream.
     list(APPEND CMAKE_MODULE_PATH "${PROJECTM_SOURCE_DIR}/cmake/gles")
     find_package(OpenGL REQUIRED COMPONENTS GLES3)
@@ -133,26 +120,15 @@ else()
     unset(HAVE_LLVM)
 endif()
 
-if(ENABLE_CXX_INTERFACE)
-    set(CMAKE_C_VISIBILITY_PRESET default)
-    set(CMAKE_CXX_VISIBILITY_PRESET default)
-    set(CMAKE_VISIBILITY_INLINES_HIDDEN OFF)
-else()
-    set(CMAKE_C_VISIBILITY_PRESET hidden)
-    set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-    set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
-endif()
+set(CMAKE_C_VISIBILITY_PRESET hidden)
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 
 include(features.cmake)
 
 add_subdirectory(presets)
 add_subdirectory(vendor)
 add_subdirectory(src)
-
-if(BUILD_TESTING)
-    enable_testing()
-    add_subdirectory(tests)
-endif()
 
 message(STATUS "")
 message(STATUS "libprojectM v${PROJECT_VERSION}")
@@ -182,7 +158,6 @@ message(STATUS "    OpenMP:                  ${ENABLE_OPENMP}")
 if(ENABLE_OPENMP)
     message(STATUS "        OpenMP version:      ${OpenMP_CXX_VERSION}")
 endif()
-message(STATUS "    Emscripten:              ${ENABLE_EMSCRIPTEN}")
 message(STATUS "    LLVM JIT:                ${ENABLE_LLVM}")
 if(ENABLE_LLVM)
     message(STATUS "        LLVM version:        ${LLVM_VERSION}")
@@ -198,15 +173,6 @@ message(STATUS "    Playlist library:        ${ENABLE_PLAYLIST}")
 message(STATUS "    SDL2 Test UI:            ${ENABLE_SDL_UI}")
 message(STATUS "    Tests:                   ${BUILD_TESTING}")
 message(STATUS "")
-
-if(ENABLE_CXX_INTERFACE)
-    message(AUTHOR_WARNING
-            "This build is configured to export C++ symbols for ProjectM and PCM classes in the shared library.\n"
-            "Using C++ STL types across library borders only works if all components were built "
-            "with the exact same toolchain and C++ language level, otherwise it will cause crashes.\n"
-            "Only use this if you know what you're doing. You have been warned!"
-            )
-endif()
 
 # Create CPack configuration
 set(CPACK_PACKAGE_NAME "projectM")

@@ -6,12 +6,6 @@ add_compile_definitions(
         $<IF:$<PLATFORM_ID:Windows>,STBI_NO_DDS,>
         )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    # dirent.h support
-    set(MSVC_EXTRA_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/msvc")
-    include_directories("${MSVC_EXTRA_INCLUDE_DIR}")
-endif()
-
 add_subdirectory(MilkdropPreset)
 add_subdirectory(Renderer)
 

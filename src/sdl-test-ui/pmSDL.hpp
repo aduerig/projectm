@@ -33,7 +33,6 @@
 #define FAKE_AUDIO 0
 // ----------------------------
 #define TEST_ALL_PRESETS 0
-#define STEREOSCOPIC_SBS 0
 
 // projectM
 #include <projectM-4/playlist.h>
@@ -69,7 +68,6 @@ public:
     int initAudioInput();
     void beginAudioCapture();
     void endAudioCapture();
-    void toggleFullScreen();
     void resize(unsigned int width, unsigned int height);
     void touch(float x, float y, int pressure, int touchtype = 0);
     void touchDrag(float x, float y, int pressure);
@@ -85,7 +83,6 @@ public:
 
     bool done{false};
     bool mouseDown{false};
-    bool wasapi{false};    // Used to track if wasapi is currently active. This bool will allow us to run a WASAPI app and still toggle to microphone inputs.
     bool fakeAudio{false}; // Used to track fake audio, so we can turn it off and on.
     bool stretch{false};   // used for toggling stretch mode
 
@@ -105,7 +102,6 @@ private:
     projectm_playlist_handle _playlist{nullptr};
 
     SDL_Window* _sdlWindow{nullptr};
-    bool _isFullScreen{false};
     size_t _width{0};
     size_t _height{0};
     size_t _fps{60};

@@ -1,19 +1,17 @@
 build_logs/
 test_sdl_audio/vendor
 
-CMakeCache.txt
-CMakeFiles
-CPackConfig.cmake
-CPackSourceConfig.cmake
 __pycache__
 dummy.cpp
 perf.data
+projectM-Test-UI
+test_sdl2
 presets/
 *.so
 *.4
 *.4.0.0
 *.pc
-*.cmake
+CMakeConfigureLog.yaml
 vendor/
 xcuserdata
 src/libprojectM/config.inp

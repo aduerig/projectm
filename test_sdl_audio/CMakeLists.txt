@@ -2,10 +2,11 @@
 
 cmake_minimum_required(VERSION 3.21 FATAL_ERROR)
 
-include(CMakeDependentOption)
 include(CheckSymbolExists)
 
-project(test_sdl2 LANGUAGES CXX)
+project(test_sdl2 LANGUAGES C CXX)
+
+find_package(SDL2 REQUIRED)
 
 # set(PROJECTM_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 # set(PROJECTM_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}")
@@ -14,9 +15,15 @@ set(PROJECTM_BIN_DIR "." CACHE STRING "Executable installation directory, relati
 set(PROJECTM_LIB_DIR "." CACHE STRING "Library installation directory, relative to the install prefix.")
 set(PROJECTM_INCLUDE_DIR "." CACHE STRING "Header installation directory, relative to the install prefix.")
 
-cmake_dependent_option(BUILD_SHARED_LIBS "Build and install libprojectM as a shared libraries. If OFF, builds as static libraries." ON "NOT ENABLE_EMSCRIPTEN" OFF)
-cmake_dependent_option(ENABLE_OPENMP "Enable OpenMP support if available" ON "NOT ENABLE_EMSCRIPTEN" OFF)
-cmake_dependent_option(ENABLE_THREADING "Enable multithreading support." ON "NOT ENABLE_EMSCRIPTEN" OFF)
+option(BUILD_SHARED_LIBS "Build and install libprojectM as a shared libraries. If OFF, builds as static libraries." ON)
+option(ENABLE_PLAYLIST "Enable building the playlist management library" ON)
+option(ENABLE_SDL_UI "Build the SDL2-based developer test UI" OFF)
+option(ENABLE_OPENMP "Enable OpenMP support if available" ON)
+option(ENABLE_THREADING "Enable multithreading support." ON)
+option(ENABLE_SYSTEM_GLM "Enable use of system-install GLM library" OFF)
+option(ENABLE_GLES "Enable OpenGL ES support" ON)
+
+
 
 if(ENABLE_SYSTEM_GLM)
     find_package(GLM REQUIRED)
@@ -26,6 +33,17 @@ else()
             INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/vendor"
             )
 endif()
+
+
+list(APPEND CMAKE_MODULE_PATH "../cmake")
+
+set(CPACK_PACKAGE_NAME "projectM")
+include(features.cmake)
+
+add_subdirectory(vendor)
+set(CPACK_VERBATIM_VARIABLES YES)
+include(CPack)
+
 
 add_executable(test_sdl2
         test_sdl.cpp
@@ -39,55 +57,6 @@ target_link_libraries(test_sdl2
         ${CMAKE_DL_LIBS}
         )
 
-
-# Remove -lSDL2 as that is handled by CMake, note the space at the end so it does not replace e.g. -lSDL2main
-# This may require "libdir" being set (from above)
-string(REPLACE "-lSDL2 " "" SDL2_EXTRA_LINK_FLAGS " -lSDL2 ")
-string(STRIP "${SDL2_EXTRA_LINK_FLAGS}" SDL2_EXTRA_LINK_FLAGS)
-string(REPLACE "-lSDL2 " "" SDL2_EXTRA_LINK_FLAGS_STATIC " -Wl,--no-undefined -lm -ldl  -lasound -lm -ldl -lpthread -lpulse-simple -lpulse  -lX11 -lXext -lXcursor -lXinerama -lXi -lXrandr -lXss -lXxf86vm -lpthread -lrt ")
-string(STRIP "${SDL2_EXTRA_LINK_FLAGS_STATIC}" SDL2_EXTRA_LINK_FLAGS_STATIC)
-
-find_library(SDL2_LIBRARY SDL2)
-if(NOT SDL2_LIBRARY)
-    message(FATAL_ERROR "Could not determine the location of the SDL2 library.")
-endif()
-
-add_library(SDL2::SDL2 SHARED IMPORTED)
-set_target_properties(SDL2::SDL2 PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES "${SDL2_INCLUDE_DIRS}"
-        IMPORTED_LINK_INTERFACE_LANGUAGES "C"
-        IMPORTED_LOCATION "${SDL2_LIBRARY}"
-        INTERFACE_LINK_LIBRARIES "${SDL2_EXTRA_LINK_FLAGS}")
-
-find_library(SDL2MAIN_LIBRARY SDL2main)
-if(NOT SDL2MAIN_LIBRARY)
-    message(FATAL_ERROR "Could not determine the location of the SDL2main library.")
-endif()
-
-add_library(SDL2::SDL2main STATIC IMPORTED)
-set_target_properties(SDL2::SDL2main PROPERTIES
-        IMPORTED_LINK_INTERFACE_LANGUAGES "C"
-        IMPORTED_LOCATION "${SDL2MAIN_LIBRARY}")
-
-# Retrieve the version from the SDL2_version.h header
-if(SDL2_INCLUDE_DIRS AND EXISTS "${SDL2_INCLUDE_DIRS}/SDL_version.h")
-    file(STRINGS "${SDL2_INCLUDE_DIRS}/SDL_version.h" SDL_VERSION_MAJOR_LINE REGEX "^#define[ \t]+SDL_MAJOR_VERSION[ \t]+[0-9]+$")
-    file(STRINGS "${SDL2_INCLUDE_DIRS}/SDL_version.h" SDL_VERSION_MINOR_LINE REGEX "^#define[ \t]+SDL_MINOR_VERSION[ \t]+[0-9]+$")
-    file(STRINGS "${SDL2_INCLUDE_DIRS}/SDL_version.h" SDL_VERSION_PATCH_LINE REGEX "^#define[ \t]+SDL_PATCHLEVEL[ \t]+[0-9]+$")
-    string(REGEX REPLACE "^#define[ \t]+SDL_MAJOR_VERSION[ \t]+([0-9]+)$" "\\1" SDL_VERSION_MAJOR "${SDL_VERSION_MAJOR_LINE}")
-    string(REGEX REPLACE "^#define[ \t]+SDL_MINOR_VERSION[ \t]+([0-9]+)$" "\\1" SDL_VERSION_MINOR "${SDL_VERSION_MINOR_LINE}")
-    string(REGEX REPLACE "^#define[ \t]+SDL_PATCHLEVEL[ \t]+([0-9]+)$" "\\1" SDL_VERSION_PATCH "${SDL_VERSION_PATCH_LINE}")
-    set(SDL2_VERSION ${SDL_VERSION_MAJOR}.${SDL_VERSION_MINOR}.${SDL_VERSION_PATCH})
-    unset(SDL_VERSION_MAJOR_LINE)
-    unset(SDL_VERSION_MINOR_LINE)
-    unset(SDL_VERSION_PATCH_LINE)
-    unset(SDL_VERSION_MAJOR)
-    unset(SDL_VERSION_MINOR)
-    unset(SDL_VERSION_PATCH)
-endif()
-
-
-# Temporary fix to deal with wrong include dir set by SDL2's CMake configuration.
 get_target_property(_SDL2_INCLUDE_DIR SDL2::SDL2 INTERFACE_INCLUDE_DIRECTORIES)
 if(_SDL2_INCLUDE_DIR MATCHES "(.+)/SDL2\$" AND _SDL2_TARGET_TYPE STREQUAL STATIC_LIBRARY)
     # Check if SDL2::SDL2 is aliased to SDL2::SDL2-static (will be the case for static-only builds)
@@ -107,4 +76,7 @@ endif()
 if(SDL2_VERSION AND SDL2_VERSION VERSION_LESS "2.0.5")
     message(FATAL_ERROR "SDL2 libraries were found, but have version ${SDL2_VERSION}. At least version 2.0.5 is required.")
 endif()
+
+
+
 

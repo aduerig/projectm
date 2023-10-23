@@ -1,7 +1,5 @@
 #include "setup.hpp"
 
-#include "ConfigFile.h"
-
 #include <SDL2/SDL_hints.h>
 
 #include <chrono>
@@ -26,60 +24,6 @@ void debugGL(GLenum source,
 }
 #endif
 
-// return path to config file to use
-std::string getConfigFilePath(std::string datadir_path) {
-    char* home = NULL;
-    std::string projectM_home;
-    std::string projectM_config = DATADIR_PATH;
-
-    projectM_config = datadir_path;
-
-#ifdef _MSC_VER
-    home=getenv("USERPROFILE");
-#else
-    home=getenv("HOME");
-#endif
-
-    projectM_home = std::string(home);
-    projectM_home += "/.projectM";
-
-    // Create the ~/.projectM directory. If it already exists, mkdir will do nothing
-#if defined _MSC_VER
-    _mkdir(projectM_home.c_str());
-#else
-    mkdir(projectM_home.c_str(), 0755);
-#endif
-
-    projectM_home += "/config.inp";
-    projectM_config += "/config.inp";
-
-    std::ifstream f_home(projectM_home);
-    std::ifstream f_config(projectM_config);
-    std::cout << "f_home " << f_home.good() << "\n";
-
-    if (f_config.good() && !f_home.good()) {
-        std::ifstream f_src;
-        std::ofstream f_dst;
-
-        f_src.open(projectM_config, std::ios::in  | std::ios::binary);
-        f_dst.open(projectM_home,   std::ios::out | std::ios::binary);
-        f_dst << f_src.rdbuf();
-        f_dst.close();
-        f_src.close();
-        return std::string(projectM_home);
-    } else if (f_home.good()) {
-        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Read ~/.projectM/config.inp\n");
-        return std::string(projectM_home);
-    } else if (f_config.good()) {
-        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Cannot create ~/.projectM/config.inp, using %s\n", projectM_config.c_str());
-        return std::string(projectM_config);
-    } else {
-        SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Using implementation defaults, your system is really messed up, I'm surprised we even got this far\n");
-        return "";
-    }
-}
-
-
 void initGL() {
 #if USE_GLES
     // use GLES 2.0 (this may need adjusting)
@@ -100,19 +44,6 @@ void dumpOpenGLInfo() {
     SDL_Log("- GL_VENDOR: %s", glGetString(GL_VENDOR));
 }
 
-void initStereoscopicView(SDL_Window *win) {
-#if STEREOSCOPIC_SB
-    // enable stereo
-    // if (SDL_GL_SetAttribute(SDL_GL_STEREO, 1) == 0)
-    // {
-    //     SDL_Log("SDL_GL_STEREO: true");
-    // }
-
-    // requires fullscreen mode
-    // SDL_ShowCursor(false);
-    // SDL_SetWindowFullscreen(win, SDL_WINDOW_FULLSCREEN);
-#endif
-}
 
 void enableGLDebugOutput() {
 #if OGL_DEBUG && !USE_GLES
@@ -126,10 +57,6 @@ void enableGLDebugOutput() {
 projectMSDL *setupSDLApp() {
     projectMSDL *app;
         
-#if UNLOCK_FPS
-    setenv("vblank_mode", "0", 1);
-#endif
-
 #ifdef SDL_HINT_AUDIO_INCLUDE_MONITORS
     SDL_SetHint(SDL_HINT_AUDIO_INCLUDE_MONITORS, "1");
 #endif
@@ -149,8 +76,6 @@ projectMSDL *setupSDLApp() {
     SDL_Window *win = SDL_CreateWindow("projectM", 0, 0, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     SDL_GL_GetDrawableSize(win,&width,&height);
 
-    initStereoscopicView(win);
-
     SDL_GLContext glCtx = SDL_GL_CreateContext(win);
 
     dumpOpenGLInfo();
@@ -167,33 +92,9 @@ projectMSDL *setupSDLApp() {
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Using data directory: %s\n", base_path.c_str());
 
     // load configuration file
-    std::string configFilePath = getConfigFilePath(base_path);
     std::string presetURL = base_path + "/presets";
 
     app = new projectMSDL(glCtx, presetURL);
-
-    if (! configFilePath.empty())
-    {
-        // found config file, load it
-        SDL_Log("Using config from %s", configFilePath.c_str());
-
-        ConfigFile config(configFilePath);
-        auto* projectMHandle = app->projectM();
-
-        projectm_set_mesh_size(projectMHandle, config.read<size_t>("Mesh X", 32), config.read<size_t>("Mesh Y", 24));
-        SDL_SetWindowSize(win, config.read<size_t>("Window Width", 1024), config.read<size_t>("Window Height", 768));
-        projectm_set_soft_cut_duration(projectMHandle, config.read<double>("Smooth Preset Duration", config.read<int>("Smooth Transition Duration", 3)));
-        projectm_set_preset_duration(projectMHandle, config.read<double>("Preset Duration", 30));
-        projectm_set_easter_egg(projectMHandle, config.read<float>("Easter Egg Parameter", 0.0));
-        projectm_set_hard_cut_enabled(projectMHandle,  config.read<bool>("Hard Cuts Enabled", false));
-        projectm_set_hard_cut_duration(projectMHandle, config.read<double>("Hard Cut Duration", 60));
-        projectm_set_hard_cut_sensitivity(projectMHandle, config.read<float>("Hard Cut Sensitivity", 1.0));
-        projectm_set_beat_sensitivity(projectMHandle, config.read<float>("Beat Sensitivity", 1.0));
-        projectm_set_aspect_correction(projectMHandle, config.read<bool>("Aspect Correction", true));
-        projectm_set_fps(projectMHandle, config.read<int32_t>("FPS", 60));
-
-        app->setFps(config.read<size_t>("FPS", 60));
-    }
 
     // center window and full desktop screen
     SDL_DisplayMode dm;
@@ -209,9 +110,6 @@ projectMSDL *setupSDLApp() {
     std::string modKey = "CTRL";
     app->init(win);
 
-#if STEREOSCOPIC_SBS
-    app->toggleFullScreen();
-#endif
     enableGLDebugOutput();
 
     // INFO: Found audio capture device 0: Monitor of GA102 High Definition Audio Controller Digital Stereo (HDMI)
@@ -231,31 +129,20 @@ projectMSDL *setupSDLApp() {
         app->beginAudioCapture();
 #endif
 
-#if TEST_ALL_PRESETS
-    testAllPresets(app);
-    return 0;
-#endif
-
     return app;
 }
 
-int64_t startUnlockedFPSCounter() {
-	using namespace std::chrono;
-	auto currentTime = steady_clock::now();
-	auto currentTimeMs = time_point_cast<milliseconds>(currentTime);
-	auto elapsedMs = currentTime.time_since_epoch();
 
-	return elapsedMs.count();
-}
+    //     // projectm_set_mesh_size(projectMHandle, config.read<size_t>("Mesh X", 32), config.read<size_t>("Mesh Y", 24));
+    //     // SDL_SetWindowSize(win, config.read<size_t>("Window Width", 1024), config.read<size_t>("Window Height", 768));
+    //     // projectm_set_soft_cut_duration(projectMHandle, config.read<double>("Smooth Preset Duration", config.read<int>("Smooth Transition Duration", 3)));
+    //     // projectm_set_preset_duration(projectMHandle, config.read<double>("Preset Duration", 30));
+    //     // projectm_set_easter_egg(projectMHandle, config.read<float>("Easter Egg Parameter", 0.0));
+    //     // projectm_set_hard_cut_enabled(projectMHandle,  config.read<bool>("Hard Cuts Enabled", false));
+    //     // projectm_set_hard_cut_duration(projectMHandle, config.read<double>("Hard Cut Duration", 60));
+    //     // projectm_set_hard_cut_sensitivity(projectMHandle, config.read<float>("Hard Cut Sensitivity", 1.0));
+    //     // projectm_set_beat_sensitivity(projectMHandle, config.read<float>("Beat Sensitivity", 1.0));
+    //     // projectm_set_aspect_correction(projectMHandle, config.read<bool>("Aspect Correction", true));
+    //     // projectm_set_fps(projectMHandle, config.read<int32_t>("FPS", 60));
 
-void advanceUnlockedFPSCounterFrame(int64_t startFrame) {
-    static int32_t frameCount = 0;
-
-    frameCount++;
-	auto currentElapsedMs = startUnlockedFPSCounter();
-	if (currentElapsedMs - startFrame > 5000)
-	{
-        printf("Frames[%d]\n", frameCount);
-        exit(0);
-    }
-}
+    //     // app->setFps(config.read<size_t>("FPS", 60));

@@ -58,41 +58,24 @@ void projectMSDL::audioInputCallbackF32(void *userdata, unsigned char *stream, i
 
 int projectMSDL::toggleAudioInput() {
     // trigger a toggle with CMD-I or CTRL-I
-    if (wasapi) { // we are currently on WASAPI, so we are going to revert to a microphone/line-in input.
-        if (this->openAudioInput())
-            this->beginAudioCapture();
-        _curAudioDevice = -1;        // start from system default device
+    this->endAudioCapture(); // end current audio capture.
+    _curAudioDevice++; // iterate device index
+    if (_curAudioDevice >= (int) _numAudioDevices) { // We reached outside the boundaries of available audio devices.
+        _curAudioDevice = -1; // Return to the default audio device.
+        if (_numAudioDevices == 0) // If WASAPI_LOOPBACK was not enabled and there is only the default audio device, it's pointless to toggle anything.
+        {
+            SDL_Log("Only the default audio capture device is available. There is nothing to toggle at this time.");
+            return 1;
+        }
         _selectedAudioDevice = _curAudioDevice;
-        this->wasapi = false; // Track wasapi as off so projectMSDL will stop listening to WASAPI loopback in pmSDL_main.
+        initAudioInput();
+        this->beginAudioCapture();
     }
     else {
-        this->endAudioCapture(); // end current audio capture.
-        _curAudioDevice++; // iterate device index
-        if (_curAudioDevice >= (int) _numAudioDevices) { // We reached outside the boundaries of available audio devices.
-            _curAudioDevice = -1; // Return to the default audio device.
-#ifdef WASAPI_LOOPBACK
-            // If we are at the boundary and WASAPI is enabled then let's load WASAPI instead.
-            SDL_Log("Loopback audio selected");
-            this->fakeAudio = false; // disable fakeAudio in case it was enabled.
-            this->wasapi = true; // Track wasapi as on so projectMSDL will listen to it.
-#else
-            if (_numAudioDevices == 0) // If WASAPI_LOOPBACK was not enabled and there is only the default audio device, it's pointless to toggle anything.
-            {
-                SDL_Log("Only the default audio capture device is available. There is nothing to toggle at this time.");
-                return 1;
-            }
-            // If WASAPI_LOOPBACK is not enabled and we have multiple input devices, return to device index 0 and let's listen to that device.
-            _selectedAudioDevice = _curAudioDevice;
-            initAudioInput();
-            this->beginAudioCapture();
-#endif
-        }
-        else {
-            // This is a normal scenario where we move forward in the audio device index.
-            _selectedAudioDevice = _curAudioDevice;
-            initAudioInput();
-            this->beginAudioCapture();
-        }
+        // This is a normal scenario where we move forward in the audio device index.
+        _selectedAudioDevice = _curAudioDevice;
+        initAudioInput();
+        this->beginAudioCapture();
     }
     return 1;
 }
@@ -105,6 +88,7 @@ int projectMSDL::openAudioInput() {
 
     // get audio input device
     _numAudioDevices = SDL_GetNumAudioDevices(true);  // capture, please
+    std::cout << "python/c++: Found " << _numAudioDevices << " audio capture devices" << std::endl;
 
     for (unsigned int i = 0; i < _numAudioDevices; i++) {
         SDL_Log("Found audio capture device %d: %s", i, SDL_GetAudioDeviceName(i, true));
@@ -116,8 +100,8 @@ int projectMSDL::openAudioInput() {
     // So we always try it, and revert to fakeAudio if the default fails _and_ NumAudioDevices == 0.
     
     // arch linux main computer andrew
-    _curAudioDevice = 4;
-    _selectedAudioDevice = 4;
+    _curAudioDevice = 3;
+    _selectedAudioDevice = 3;
     if(!initAudioInput() && _numAudioDevices == 0) {
         // the default device doesn't work, and there's no other device to try
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "No audio capture devices found");
