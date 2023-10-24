@@ -9,6 +9,10 @@ other frontend
 cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_SDL_UI=ON
 cmake --build . -- -j
 
+ON RASP PI:
+    cmake --build .
+
+
 src/sdl-test-ui/projectM-Test-UI
 
 
