@@ -149,18 +149,19 @@ void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audio
 
     m_finalComposite.Draw(m_state, m_perFrameContext);
 
-    // ToDo: Draw user sprites (can have evaluated code)
-
     if (!m_finalComposite.HasCompositeShader())
     {
         // Flip texture again in "previous" framebuffer as old-school effects are still upside down.
         m_flipTexture.Draw(m_framebuffer.GetColorAttachmentTexture(m_previousFrameBuffer, 0), m_framebuffer, m_previousFrameBuffer);
     }
 
+
     // TEST: Copy result to default framebuffer
+
     m_framebuffer.BindRead(m_previousFrameBuffer);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     glReadBuffer(GL_COLOR_ATTACHMENT0);
+
 #if USE_GLES
     {
         GLenum drawBuffers[] = {GL_BACK};
@@ -169,12 +170,29 @@ void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audio
 #else
     glDrawBuffer(GL_COLOR_ATTACHMENT0);
 #endif
+    // glReadPixels(0, 0, grab_width, grab_height, GL_RGB, GL_UNSIGNED_BYTE, andrew_pixels);
+
     // draws framebuffer to screen
     glBlitFramebuffer(0, 0, renderContext.viewportSizeX, renderContext.viewportSizeY,
                       0, 0, renderContext.viewportSizeX, renderContext.viewportSizeY,
                       GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    // error = glGetError();
+    // if (error != GL_NO_ERROR) {
+    //     std::cerr << "OpenGL glBlitFramebuffer error: " << error << std::endl;
+    // }
 
-    glReadPixels(0, 0, grab_height, grab_width, GL_RGB, GL_UNSIGNED_BYTE, andrew_pixels);
+    // glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    // error = glGetError();
+    // if (error != GL_NO_ERROR) {
+    //     std::cerr << "OpenGL glPixelStorei error: " << error << std::endl;
+    // }
+
+    // this was once GL_RGB idk why it changed
+    glReadPixels(0, 0, grab_width, grab_height, GL_RGBA, GL_UNSIGNED_BYTE, andrew_pixels);
+    GLenum error = glGetError();
+    if (error != GL_NO_ERROR) {
+        std::cerr << "OpenGL glReadPixels error: " << error << std::endl;
+    }
 
     // Swap framebuffers for the next frame.
     std::swap(m_currentFrameBuffer, m_previousFrameBuffer);
@@ -187,22 +205,20 @@ void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audio
 void MilkdropPreset::PrintToTerminal(const RenderContext& renderContext)
 {
     std::stringstream ss;
-    for (int y = 0; y < grab_width; y++) {
-        for (int x = 0; x < grab_height; x++) {
-            int index = (y * grab_height + x) * 3;
+    for (int y = 0; y < grab_height; y++) {
+        for (int x = 0; x < grab_width; x++) {
+            int index = (y * grab_width + x) * 4;
             int r = andrew_pixels[index];
             int g = andrew_pixels[index + 1];
             int b = andrew_pixels[index + 2];
+            int a = andrew_pixels[index + 3];
             ss << "\033[48;2;" << r << ";" << g << ";" << b << "m  \033[0m";
         }
         ss << std::endl;
     }
-
-    ss << "Dimensions: " << renderContext.viewportSizeX << " x " << renderContext.viewportSizeY << ", Using grab_width / height:" << grab_width << ", " << grab_height << "Preset: " << m_absolutePath << std::endl;
+    std::cout << "Dimensions: " << renderContext.viewportSizeX << " x " << renderContext.viewportSizeY << ", grab_width / grab_height:" << grab_width << "x" << grab_height << std::endl;
     std::cout << ss.str();
-
-    std::cout << "\033[" << renderContext.viewportSizeY + 3 << "A" << std::endl;
-    std::cout << "LINE" << std::endl;
+    std::cout << "\033[" << grab_height + 2 << "A" << std::endl;
 }
 
 

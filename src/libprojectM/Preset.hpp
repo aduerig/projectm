@@ -10,10 +10,10 @@ class Preset
 public:
     virtual ~Preset() = default;
 
-    int grab_height = 32; 
-    int grab_width = 20;
+    int grab_height = 20; 
+    int grab_width = 32;
     // !TODO MAYBE LEAK HERE?
-    GLubyte* andrew_pixels = new GLubyte[3 * grab_width * grab_height];
+    GLubyte* andrew_pixels = new GLubyte[grab_width * grab_height * 4];
 
     /**
      * @brief Initializes additional preset resources.

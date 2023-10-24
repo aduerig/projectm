@@ -18,8 +18,7 @@ projectMSDL::~projectMSDL() {
     _projectM = nullptr;
 }
 
-void projectMSDL::scrollHandler(SDL_Event* sdl_evt)
-{
+void projectMSDL::scrollHandler(SDL_Event* sdl_evt) {
     if (sdl_evt->wheel.y > 0) { // handle mouse scroll wheel - up++
         projectm_playlist_play_previous(_playlist, true);
     }
@@ -29,8 +28,7 @@ void projectMSDL::scrollHandler(SDL_Event* sdl_evt)
     }
 }
 
-void projectMSDL::keyHandler(SDL_Event* sdl_evt)
-{
+void projectMSDL::keyHandler(SDL_Event* sdl_evt) {
     SDL_Keymod sdl_mod = (SDL_Keymod) sdl_evt->key.keysym.mod;
     SDL_Keycode sdl_keycode = sdl_evt->key.keysym.sym;
 
@@ -77,8 +75,7 @@ void projectMSDL::keyHandler(SDL_Event* sdl_evt)
     }
 }
 
-void projectMSDL::resize(unsigned int width_, unsigned int height_)
-{
+void projectMSDL::resize(unsigned int width_, unsigned int height_) {
     _width = width_;
     _height = height_;
 
@@ -91,8 +88,7 @@ void projectMSDL::resize(unsigned int width_, unsigned int height_)
     projectm_set_window_size(_projectM, _width, _height);
 }
 
-void projectMSDL::pollEvent()
-{
+void projectMSDL::pollEvent() {
     SDL_Event evt;
 
     int mousex = 0;
@@ -100,15 +96,12 @@ void projectMSDL::pollEvent()
     int mousey = 0;
     float mouseyscale = 0;
     int mousepressure = 0;
-    while (SDL_PollEvent(&evt))
-    {
-        switch (evt.type)
-        {
+    while (SDL_PollEvent(&evt)) {
+        switch (evt.type) {
             case SDL_WINDOWEVENT:
                 int h, w;
                 SDL_GL_GetDrawableSize(_sdlWindow, &w, &h);
-                switch (evt.window.event)
-                {
+                switch (evt.window.event) {
                     case SDL_WINDOWEVENT_RESIZED:
                         resize(w, h);
                         break;
@@ -125,41 +118,27 @@ void projectMSDL::pollEvent()
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
-                if (evt.button.button == SDL_BUTTON_LEFT)
-                {
-                    // if it's the first mouse down event (since mouse up or since SDL was launched)
-                    if (!mouseDown)
-                    {
-                        // Get mouse coorindates when you click.
+                if (evt.button.button == SDL_BUTTON_LEFT) {
+                    if (!mouseDown) {
                         SDL_GetMouseState(&mousex, &mousey);
                         // Scale those coordinates. libProjectM supports a scale of 0.1 instead of absolute pixel coordinates.
                         mousexscale = (mousex / (float) _width);
                         mouseyscale = ((_height - mousey) / (float) _height);
-                        // Touch. By not supplying a touch type, we will default to random.
-                        touch(mousexscale, mouseyscale, mousepressure);
+                        touch(mousexscale, mouseyscale, mousepressure); // Touch. By not supplying a touch type, we will default to random.
                         mouseDown = true;
                     }
                 }
-                else if (evt.button.button == SDL_BUTTON_RIGHT)
-                {
+                else if (evt.button.button == SDL_BUTTON_RIGHT) {
                     mouseDown = false;
-
-                    // Keymod = Left or Right Gui or Left Ctrl. This is a shortcut to remove all waveforms.
-                    if (keymod)
-                    {
+                    if (keymod) { // Keymod = Left or Right Gui or Left Ctrl. This is a shortcut to remove all waveforms.
                         touchDestroyAll();
                         keymod = false;
                         break;
                     }
 
-                    // Right Click
-                    SDL_GetMouseState(&mousex, &mousey);
-
-                    // Scale those coordinates. libProjectM supports a scale of 0.1 instead of absolute pixel coordinates.
+                    SDL_GetMouseState(&mousex, &mousey); // Right Click
                     mousexscale = (mousex / (float) _width);
                     mouseyscale = ((_height - mousey) / (float) _height);
-
-                    // Destroy at the coordinates we clicked.
                     touchDestroy(mousexscale, mouseyscale);
                 }
                 break;
@@ -174,64 +153,53 @@ void projectMSDL::pollEvent()
         }
     }
 
-    // Handle dragging your waveform when mouse is down.
     if (mouseDown)
     {
-        // Get mouse coordinates when you click.
         SDL_GetMouseState(&mousex, &mousey);
-        // Scale those coordinates. libProjectM supports a scale of 0.1 instead of absolute pixel coordinates.
         mousexscale = (mousex / (float) _width);
         mouseyscale = ((_height - mousey) / (float) _height);
-        // Drag Touch.
         touchDrag(mousexscale, mouseyscale, mousepressure);
     }
 }
 
 // This touches the screen to generate a waveform at X / Y.
-void projectMSDL::touch(float x, float y, int pressure, int touchtype)
-{
+void projectMSDL::touch(float x, float y, int pressure, int touchtype) {
 #ifdef PROJECTM_TOUCH_ENABLED
     projectm_touch(_projectM, x, y, pressure, static_cast<projectm_touch_type>(touchtype));
 #endif
 }
 
 // This moves the X Y of your existing waveform that was generated by a touch (only if you held down your click and dragged your mouse around).
-void projectMSDL::touchDrag(float x, float y, int pressure)
-{
+void projectMSDL::touchDrag(float x, float y, int pressure) {
     projectm_touch_drag(_projectM, x, y, pressure);
 }
 
 // Remove waveform at X Y
-void projectMSDL::touchDestroy(float x, float y)
-{
+void projectMSDL::touchDestroy(float x, float y) {
     projectm_touch_destroy(_projectM, x, y);
 }
 
 // Remove all waveforms
-void projectMSDL::touchDestroyAll()
-{
+void projectMSDL::touchDestroyAll() {
     projectm_touch_destroy_all(_projectM);
 }
 
-void projectMSDL::renderFrame()
-{
-    // projectm_print_to_terminal(_projectM);
+void projectMSDL::renderFrame() {
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     projectm_opengl_render_frame(_projectM);
+    projectm_print_to_terminal(_projectM);
 
     SDL_GL_SwapWindow(_sdlWindow);
 }
 
-void projectMSDL::init(SDL_Window* window, const bool _renderToTexture)
-{
+void projectMSDL::init(SDL_Window* window, const bool _renderToTexture) {
     _sdlWindow = window;
     projectm_set_window_size(_projectM, _width, _height);
 }
 
-std::string projectMSDL::getActivePresetName()
-{
+std::string projectMSDL::getActivePresetName() {
     unsigned int index = projectm_playlist_get_position(_playlist);
     if (index)
     {
@@ -243,8 +211,7 @@ std::string projectMSDL::getActivePresetName()
     return {};
 }
 
-void projectMSDL::presetSwitchedEvent(bool isHardCut, unsigned int index, void* context)
-{
+void projectMSDL::presetSwitchedEvent(bool isHardCut, unsigned int index, void* context) {
     auto app = reinterpret_cast<projectMSDL*>(context);
     auto presetName = projectm_playlist_item(app->_playlist, index);
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Displaying preset: %s\n", presetName);
@@ -255,23 +222,19 @@ void projectMSDL::presetSwitchedEvent(bool isHardCut, unsigned int index, void* 
     app->UpdateWindowTitle();
 }
 
-projectm_handle projectMSDL::projectM()
-{
+projectm_handle projectMSDL::projectM() {
     return _projectM;
 }
 
-void projectMSDL::setFps(size_t fps)
-{
+void projectMSDL::setFps(size_t fps) {
     _fps = fps;
 }
 
-size_t projectMSDL::fps() const
-{
+size_t projectMSDL::fps() const {
     return _fps;
 }
 
-void projectMSDL::UpdateWindowTitle()
-{
+void projectMSDL::UpdateWindowTitle() {
     std::string title = "projectM ➫ " + _presetName;
     if (projectm_get_preset_locked(_projectM))
     {
