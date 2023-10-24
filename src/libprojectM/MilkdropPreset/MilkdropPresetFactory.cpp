@@ -18,7 +18,7 @@
 std::unique_ptr<Preset>
 MilkdropPresetFactory::LoadPresetFromFile(const std::string& filename)
 {
-    std::cout << "MilkdropPresetFactory::LoadPresetFromFile " << filename << std::endl;
+    // std::cout << "MilkdropPresetFactory::LoadPresetFromFile " << filename << std::endl;
 
     std::string path;
     auto protocol = PresetFactory::Protocol(filename, path);
@@ -28,7 +28,7 @@ MilkdropPresetFactory::LoadPresetFromFile(const std::string& filename)
     }
     else if (protocol == "" || protocol == "file")
     {
-        std::cout << "MilkdropPresetFactory::LoadPresetFromFile  else if (protocol ==  || protocol == file)" << std::endl;
+        // std::cout << "MilkdropPresetFactory::LoadPresetFromFile  else if (protocol ==  || protocol == file)" << std::endl;
         return std::make_unique<MilkdropPreset>(path);
     }
     else

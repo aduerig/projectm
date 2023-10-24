@@ -16,9 +16,9 @@ import time
 import pathlib
 import random
 import threading
+import collections
 
 import numpy as np
-from pynput.keyboard import Listener, KeyCode
 
 
 this_file_directory = pathlib.Path(__file__).parent.resolve()
@@ -30,65 +30,99 @@ winamp_visual.setup_winamp()
 
 
 
-keys_to_proccess = []
-_return_code, stdout, _stderr = run_command_blocking([
-    'xdotool',
-    'getactivewindow',
-])
-process_window_id = int(stdout.strip())
+keys_to_proccess = collections.deque([])
 
-# https://stackoverflow.com/questions/24072790/how-to-detect-key-presses how to check window name (not global)
-def window_focus():
-    return_code, stdout, _stderr = run_command_blocking([
-        'xdotool',
-        'getwindowfocus',
-    ])
-    if return_code != 0:
-        return False
-    other = int(stdout.strip())
-    return process_window_id == other
 
-def on_press(key):
-    if not window_focus():
+def start_listen_keys():
+    if is_andrews_main_computer():
+        from pynput.keyboard import Listener, KeyCode
+
+        _return_code, stdout, _stderr = run_command_blocking([
+            'xdotool',
+            'getactivewindow',
+        ])
+        process_window_id = int(stdout.strip())
+
+        # https://stackoverflow.com/questions/24072790/how-to-detect-key-presses how to check window name (not global)
+        def window_focus():
+            return_code, stdout, _stderr = run_command_blocking([
+                'xdotool',
+                'getwindowfocus',
+            ])
+            if return_code != 0:
+                return False
+            other = int(stdout.strip())
+            return process_window_id == other
+
+        def on_press(key):
+            if not window_focus():
+                return
+            if type(key) == KeyCode:
+                key_name = key.char
+            else:
+                key_name = key.name
+            if key_name in keyboard_dict:
+                keys_to_proccess.append(key_name)
+
+        def on_release(key):
+            if not window_focus():
+                return
+            if type(key) == KeyCode:
+                key_name = key.char
+            else:
+                key_name = key.name
+
+
+        def listen_for_keystrokes():
+            with Listener(on_press=on_press, on_release=on_release) as listener:
+                listener.join()
+
+        threading.Thread(target=listen_for_keystrokes, args=[], daemon=True).start()
+    elif is_doorbell():
+        print_red('NOT LISTENING FOR KEYSTROKES, NEED TO IMPLEMENT THIS')
+
+
+preset_history = collections.deque([])
+preset_index = -1
+def last_preset():
+    global preset_index
+    if preset_index <= 0:
         return
-    if type(key) == KeyCode:
-        key_name = key.char
-    else:
-        key_name = key.name
-    if key_name in keyboard_dict:
-        keys_to_proccess.append(key_name)
+    preset_index -= 1
+    preset_path = preset_history[preset_index]
+    print(f'Preset index is at {preset_index}/{len(preset_history) - 1} now')
+    load_preset(preset_path)
 
-def on_release(key):
-    if not window_focus():
+
+def next_preset():
+    global preset_index
+    if preset_index >= len(preset_history) - 1:
         return
-    if type(key) == KeyCode:
-        key_name = key.char
-    else:
-        key_name = key.name
-
-
-def listen_for_keystrokes():
-    with Listener(on_press=on_press, on_release=on_release) as listener:
-        listener.join()
+    preset_index += 1
+    preset_path = preset_history[preset_index]
+    print(f'Preset index is at {preset_index}/{len(preset_history) - 1} now')
+    load_preset(preset_path)
 
 
 def load_preset(preset_path):
-    better_print = preset_path.relative_to(preset_path)
+    better_print = preset_path.relative_to(presets_directory)
+    better_print = better_print.relative_to(better_print.parts[0])
     print_blue(f'Python: loading preset {better_print}')
     winamp_visual.load_preset(str(preset_path))
-
-
-
 # load_preset(presets_directory.joinpath('tests', '001-line.milk'))
 
 
 presets_directory = this_file_directory.joinpath('presets')
 all_presets = list(get_all_paths(presets_directory, recursive=True, only_files=True, allowed_extensions=['.milk']))
-
 print_green(f'{len(all_presets):,} milk visualizer presets to choose from')
-
 def random_preset():
+    global preset_index
     preset_path = random.choice(all_presets)[1]
+
+    preset_history.append(preset_path)
+    preset_index = len(preset_history) - 1
+    print(f'Python: randomly loading preset, preset index at {preset_index}/{len(preset_history) - 1} now')
+
     load_preset(preset_path)
 
 
@@ -114,17 +148,19 @@ keyboard_dict = {
     'b': lambda: print(winamp_visual.get_beat_sensitivity()),
     'up': lambda: increase_beat_sensitivity(),
     'down': lambda: decrease_beat_sensitivity(),
+
+    'left': lambda: last_preset(),
+    'right': lambda: next_preset(),
     # 'left': lambda: restart_show(skip=-skip_time),
     # 'right': lambda: restart_show(skip=skip_time),
     # 'space': 'UV',
 }
-threading.Thread(target=listen_for_keystrokes, args=[], daemon=True).start()
 
+start_listen_keys()
 
-index = 0
 while True:
     if len(keys_to_proccess) > 0:
-        key = keys_to_proccess.pop(0)
+        key = keys_to_proccess.popleft()
         if key in keyboard_dict:
             keyboard_dict[key]()
         else:
@@ -132,6 +168,6 @@ while True:
     winamp_visual.render_frame()
     winamp_visual.load_into_numpy_array(grid)
     print_grid_to_terminal()
+
     # winamp_visual.print_to_terminal_higher_level()
     time.sleep(1/24)
-    index += 1

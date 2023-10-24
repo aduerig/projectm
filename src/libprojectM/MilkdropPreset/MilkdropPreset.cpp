@@ -40,7 +40,7 @@ MilkdropPreset::MilkdropPreset(const std::string& absoluteFilePath)
     , m_darkenCenter(m_state)
     , m_border(m_state)
 {
-    std::cout << "MilkdropPreset::MilkdropPreset(const std::string& absoluteFilePath)" << std::endl;
+    // std::cout << "MilkdropPreset::MilkdropPreset(const std::string& absoluteFilePath)" << std::endl;
     Load(absoluteFilePath);
 }
 
@@ -211,7 +211,7 @@ void MilkdropPreset::PrintToTerminal(const RenderContext& renderContext)
             int r = andrew_pixels[index];
             int g = andrew_pixels[index + 1];
             int b = andrew_pixels[index + 2];
-            int a = andrew_pixels[index + 3];
+            // int a = andrew_pixels[index + 3];
             ss << "\033[48;2;" << r << ";" << g << ";" << b << "m  \033[0m";
         }
         ss << std::endl;
@@ -242,7 +242,7 @@ void MilkdropPreset::Load(const std::string& pathname)
     std::cerr << "[Preset] Loading preset from file \"" << pathname << "\"." << std::endl;
 #endif
 
-    std::cout << "andrew: milkdrop: loading pathname" << std::endl;
+    // std::cout << "andrew: milkdrop: loading pathname" << std::endl;
 
     SetFilename(ParseFilename(pathname));
 
@@ -265,7 +265,7 @@ void MilkdropPreset::Load(std::istream& stream)
     std::cerr << "[Preset] Loading preset from stream." << std::endl;
 #endif
 
-    std::cout << "andrew: milkdrop: Load stream" << std::endl;
+    // std::cout << "andrew: milkdrop: Load stream" << std::endl;
 
     PresetFileParser parser;
 
@@ -282,7 +282,7 @@ void MilkdropPreset::Load(std::istream& stream)
 
 void MilkdropPreset::InitializePreset(PresetFileParser& parsedFile)
 {
-    std::cout << "andrew: milkdrop: InitializePreset" << std::endl;
+    // std::cout << "andrew: milkdrop: InitializePreset" << std::endl;
 
     // Create the offscreen rendering surfaces.
     m_motionVectorUVMap = std::make_shared<TextureAttachment>(GL_RG16F, GL_RG, GL_FLOAT, 0, 0);

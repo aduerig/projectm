@@ -64,7 +64,7 @@ void ProjectM::PresetSwitchFailedEvent(const std::string&, const std::string&) c
 
 void ProjectM::LoadPresetFile(const std::string& presetFilename, bool smoothTransition)
 {
-    std::cout << "ProjectM::LoadPresetFile: " << presetFilename << std::endl;
+    // std::cout << "ProjectM::LoadPresetFile: " << presetFilename << std::endl;
     // If already in a transition, force immediate completion.
     if (m_transitioningPreset != nullptr)
     {
@@ -298,7 +298,6 @@ void ProjectM::ResetOpenGL(size_t width, size_t height)
 
 void ProjectM::StartPresetTransition(std::unique_ptr<Preset>&& preset, bool hardCut)
 {
-    std::cout << "ProjectM::StartPresetTransition" << std::endl;
     m_presetChangeNotified = m_presetLocked;
 
     if (preset == nullptr)
