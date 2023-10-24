@@ -2,7 +2,9 @@
 
 #include <vector>
 
-projectMSDL::projectMSDL(SDL_GLContext glCtx, const std::string& presetPath)
+using namespace std;
+
+projectMSDL::projectMSDL(SDL_GLContext glCtx, const string& presetPath)
     : _openGlContext(glCtx)
     , _projectM(projectm_create())
     , _playlist(projectm_playlist_create(_projectM)) {
@@ -38,7 +40,7 @@ void projectMSDL::keyHandler(SDL_Event* sdl_evt) {
     // handle keyboard input (for our app first, then projectM)
     switch (sdl_keycode)
     {
-        // std::cout << sdl_keycode << std::endl;
+        // cout << sdl_keycode << endl;
         case SDLK_q:
             if (sdl_mod & KMOD_LGUI || sdl_mod & KMOD_RGUI || sdl_mod & KMOD_LCTRL)
             {
@@ -56,7 +58,7 @@ void projectMSDL::keyHandler(SDL_Event* sdl_evt) {
             break;
 
         case SDLK_LEFT:
-            std::cout << "pmSDL: play previous (left key)" << std::endl;
+            cout << "pmSDL: play previous (left key)" << endl;
             projectm_playlist_play_previous(_playlist, true);
             break;
 
@@ -66,10 +68,12 @@ void projectMSDL::keyHandler(SDL_Event* sdl_evt) {
 
         case SDLK_UP:
             projectm_set_beat_sensitivity(_projectM, projectm_get_beat_sensitivity(_projectM) + 0.01f);
+            cout << "pmSDL: increase beat sensitivity" << projectm_get_beat_sensitivity(_projectM) << endl << endl;
             break;
 
         case SDLK_DOWN:
             projectm_set_beat_sensitivity(_projectM, projectm_get_beat_sensitivity(_projectM) - 0.01f);
+            cout << "pmSDL: decrease beat sensitivity" << projectm_get_beat_sensitivity(_projectM) << endl << endl;
             break;
 
     }
@@ -199,12 +203,12 @@ void projectMSDL::init(SDL_Window* window, const bool _renderToTexture) {
     projectm_set_window_size(_projectM, _width, _height);
 }
 
-std::string projectMSDL::getActivePresetName() {
+string projectMSDL::getActivePresetName() {
     unsigned int index = projectm_playlist_get_position(_playlist);
     if (index)
     {
         auto presetName = projectm_playlist_item(_playlist, index);
-        std::string presetNameString(presetName);
+        string presetNameString(presetName);
         projectm_playlist_free_string(presetName);
         return presetNameString;
     }
@@ -214,7 +218,7 @@ std::string projectMSDL::getActivePresetName() {
 void projectMSDL::presetSwitchedEvent(bool isHardCut, unsigned int index, void* context) {
     auto app = reinterpret_cast<projectMSDL*>(context);
     auto presetName = projectm_playlist_item(app->_playlist, index);
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Displaying preset: %s\n", presetName);
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Displaying preset: %s\n\n", presetName);
 
     app->_presetName = presetName;
     projectm_playlist_free_string(presetName);
@@ -235,7 +239,7 @@ size_t projectMSDL::fps() const {
 }
 
 void projectMSDL::UpdateWindowTitle() {
-    std::string title = "projectM ➫ " + _presetName;
+    string title = "projectM ➫ " + _presetName;
     if (projectm_get_preset_locked(_projectM))
     {
         title.append(" [locked]");

@@ -230,12 +230,13 @@ winamp_visual_print_to_terminal_higher_level(PyObject* self, PyObject* args) {
     // cout << "grab_width: " << grab_width << ", grab_height" << projectm_get_grab_height << endl;
 
     std::stringstream ss;
-    for (int y = 0; y < grab_width; y++) {
-        for (int x = 0; x < grab_height; x++) {
-            int index = (y * grab_height + x) * 3;
+    for (int y = 0; y < grab_height; y++) {
+        for (int x = 0; x < grab_width; x++) {
+            int index = (y * grab_width + x) * 4;
             int r = andrew_pixels[index];
             int g = andrew_pixels[index + 1];
             int b = andrew_pixels[index + 2];
+            int a = andrew_pixels[index + 3];
             ss << "\033[48;2;" << r << ";" << g << ";" << b << "m  \033[0m";
         }
         ss << std::endl;
@@ -244,7 +245,7 @@ winamp_visual_print_to_terminal_higher_level(PyObject* self, PyObject* args) {
     ss << "Using grab_width / height:" << grab_width << ", " << grab_height << endl;
     std::cout << ss.str();
 
-    std::cout << "\033[" << grab_width + 2 << "A" << std::endl;
+    std::cout << "\033[" << grab_height + 2 << "A" << std::endl;
     return Py_BuildValue("");
 }
 
@@ -258,35 +259,62 @@ winamp_visual_load_into_numpy_array(PyObject* self, PyObject* args) {
     int grab_height = projectm_get_grab_height(_projectM);
     GLubyte* andrew_pixels = projectm_get_andrew_pixels(_projectM);
 
+    // !TODO consider making numpy array: NPY_UBYTE, idk why its a double
+
     // get numpy array from arguments
     PyArrayObject* numpy_array;
     if(!PyArg_ParseTuple(args, "O!", &PyArray_Type, &numpy_array)) {
         return NULL;
     }
 
+    // numpy_array will be shape (20, 32, 3)
+    // andrew_pixels is shape (32, 20, 4)
+    // grab_width: 32, grab_height: 20
+
     // Check if the array shape matches the expected shape
-    if(PyArray_NDIM(numpy_array) != 3 ||
-       PyArray_DIM(numpy_array, 0) != grab_width ||
-       PyArray_DIM(numpy_array, 1) != grab_height ||
-       PyArray_DIM(numpy_array, 2) != 3) {
-        PyErr_SetString(PyExc_ValueError, "Input numpy array has incorrect shape or number of dimensions");
+    npy_intp* dims = PyArray_DIMS(numpy_array);
+    if (dims[0] != grab_height || dims[1] != grab_width || dims[2] != 3) {
+        PyErr_SetString(PyExc_ValueError, "numpy_array shape mismatch");
         return NULL;
     }
 
-    // load from andrew_pixels into numpy_array
-    GLubyte* numpy_data = (GLubyte*) PyArray_DATA(numpy_array);
-    for (int y = 0; y < grab_width; y++) {
-        for (int x = 0; x < grab_height; x++) {
-            int index = (y * grab_height + x) * 3;
-            numpy_data[index] = andrew_pixels[index];
-            numpy_data[index + 1] = andrew_pixels[index + 1];
-            numpy_data[index + 2] = andrew_pixels[index + 2];
+    // Ensure the numpy array is of the right type
+    if (PyArray_TYPE(numpy_array) != NPY_DOUBLE) {
+        PyErr_SetString(PyExc_ValueError, "numpy_array must be of type uint8");
+        return NULL;
+    }
+
+    // load from andrew_pixels (RGBA values) into numpy_array (RGB)
+    // remember that andrew_pixels is ubyte, and we need to load into numpy correctly
+    for (int y = 0; y < grab_height; y++) {
+        for (int x = 0; x < grab_width; x++) {
+            int index = (y * grab_width + x) * 4;  // Index for andrew_pixels (RGBA)
+            
+            GLubyte* pixel = andrew_pixels + index;
+
+            // Compute the numpy array's position
+            double* numpy_pixel = (double*)PyArray_DATA(numpy_array) + (y * grab_width * 3 + x * 3);
+
+            // Convert and normalize RGBA to RGB (normalized to the range [0, 1])
+            numpy_pixel[0] = (double)pixel[0] / 255.0;  // R
+            numpy_pixel[1] = (double)pixel[1] / 255.0;  // G
+            numpy_pixel[2] = (double)pixel[2] / 255.0;  // B
         }
     }
 
-
     return Py_BuildValue("");
 }
+
+    // GLubyte* numpy_data = (GLubyte*) PyArray_DATA(numpy_array);
+    // for (int y = 0; y < grab_height; y++) {
+    //     for (int x = 0; x < grab_width; x++) {
+    //         int andrew_pixels_index = (y * grab_width + x) * 4;
+    //         int numpy_index = (y * grab_width + x) * 3;
+    //         numpy_data[numpy_index] = andrew_pixels[andrew_pixels_index];
+    //         numpy_data[numpy_index + 1] = andrew_pixels[andrew_pixels_index + 1];
+    //         numpy_data[numpy_index + 2] = andrew_pixels[andrew_pixels_index + 2];
+    //     }
+    // }
 
 
 
