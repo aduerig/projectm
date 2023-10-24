@@ -236,7 +236,7 @@ winamp_visual_print_to_terminal_higher_level(PyObject* self, PyObject* args) {
             int r = andrew_pixels[index];
             int g = andrew_pixels[index + 1];
             int b = andrew_pixels[index + 2];
-            int a = andrew_pixels[index + 3];
+            // int a = andrew_pixels[index + 3];
             ss << "\033[48;2;" << r << ";" << g << ";" << b << "m  \033[0m";
         }
         ss << std::endl;
@@ -247,6 +247,25 @@ winamp_visual_print_to_terminal_higher_level(PyObject* self, PyObject* args) {
 
     std::cout << "\033[" << grab_height + 2 << "A" << std::endl;
     return Py_BuildValue("");
+}
+
+
+static PyObject*
+winamp_visual_set_beat_sensitivity(PyObject* self, PyObject* args) {
+    // load double from arguments 
+    float beat_sensitivity;
+    if(!PyArg_ParseTuple(args, "f", &beat_sensitivity)) {
+        return NULL;
+    }
+    projectm_set_beat_sensitivity(_projectM, beat_sensitivity);
+    return Py_BuildValue("");
+}
+
+
+static PyObject*
+winamp_visual_get_beat_sensitivity(PyObject* self, PyObject* args) {
+    float beat_sensitivity = projectm_get_beat_sensitivity(_projectM);
+    return Py_BuildValue("f", beat_sensitivity);
 }
 
 
@@ -295,13 +314,12 @@ winamp_visual_load_into_numpy_array(PyObject* self, PyObject* args) {
             // Compute the numpy array's position
             double* numpy_pixel = (double*)PyArray_DATA(numpy_array) + (y * grab_width * 3 + x * 3);
 
-            // Convert and normalize RGBA to RGB (normalized to the range [0, 1])
-            numpy_pixel[0] = (double)pixel[0] / 255.0;  // R
-            numpy_pixel[1] = (double)pixel[1] / 255.0;  // G
-            numpy_pixel[2] = (double)pixel[2] / 255.0;  // B
+            // Convert and normalize RGBA to RGB (normalized to the range [0, 100])
+            numpy_pixel[0] = (double)pixel[0] / 2.55;  // R
+            numpy_pixel[1] = (double)pixel[1] / 2.55;  // G
+            numpy_pixel[2] = (double)pixel[2] / 2.55;  // B
         }
     }
-
     return Py_BuildValue("");
 }
 
@@ -330,6 +348,8 @@ static PyMethodDef winamp_visual_methods[] = {
     {"setup_winamp", winamp_visual_setup_winamp, METH_VARARGS, ""},
     {"load_preset", winamp_visual_load_preset, METH_VARARGS, ""},
     {"render_frame", winamp_visual_render_frame, METH_VARARGS, ""},
+    {"set_beat_sensitivity", winamp_visual_set_beat_sensitivity, METH_VARARGS, ""},
+    {"get_beat_sensitivity", winamp_visual_get_beat_sensitivity, METH_VARARGS, ""},
     {"print_to_terminal", winamp_visual_print_to_terminal, METH_VARARGS, ""},
     {"print_to_terminal_higher_level", winamp_visual_print_to_terminal_higher_level, METH_VARARGS, ""},
     {"load_into_numpy_array", winamp_visual_load_into_numpy_array, METH_VARARGS, ""},

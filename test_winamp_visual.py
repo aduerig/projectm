@@ -71,11 +71,11 @@ def listen_for_keystrokes():
         listener.join()
 
 
-
-
 def load_preset(preset_path):
     print(f'Python: loading {preset_path}')
     winamp_visual.load_preset(str(preset_path))
+
+
 
 # load_preset(presets_directory.joinpath('tests', '001-line.milk'))
 
@@ -93,13 +93,15 @@ def random_preset():
 
 grid = np.array(np.zeros((20, 32, 3)), np.double)
 def print_grid_to_terminal():
-    to_print_grid = grid.astype(int)
+    to_print_grid = (grid * 2.55).astype(int)
     [print(''.join(f'\033[38;2;{rgb[0]};{rgb[1]};{rgb[2]}m▆\033[0m' for rgb in to_print_grid[x])) for x in range(20)]
     print('\033[F' * 20, end='')
 
 keyboard_dict = {
     'r': lambda: random_preset(),
-    # 'down': lambda: restart_show(skip=-2),
+    'b': lambda: print(winamp_visual.get_beat_sensitivity()),
+    'up': lambda: winamp_visual.set_beat_sensitivity(winamp_visual.get_beat_sensitivity() + .01),
+    'down': lambda: winamp_visual.set_beat_sensitivity(winamp_visual.get_beat_sensitivity() - .01),
     # 'left': lambda: restart_show(skip=-skip_time),
     # 'right': lambda: restart_show(skip=skip_time),
     # 'space': 'UV',
@@ -110,9 +112,7 @@ threading.Thread(target=listen_for_keystrokes, args=[], daemon=True).start()
 index = 0
 while True:
     winamp_visual.render_frame()
-    print(f'{index}: BEFORE LOAD: {np.isnan(grid).any()=}')
     winamp_visual.load_into_numpy_array(grid)
-    print(f'{index}: AFTER LOAD: {np.isnan(grid).any()=}')
     print_grid_to_terminal()
     # winamp_visual.print_to_terminal_higher_level()
     time.sleep(1/24)
