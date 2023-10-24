@@ -200,17 +200,13 @@ winamp_visual_setup_winamp(PyObject* self, PyObject* args) {
 
 static PyObject*
 winamp_visual_load_preset(PyObject* self, PyObject* args) {
-    std::cout << "C++ - Python Extension: loading preset" << std::endl;
+    // std::cout << "C++ - Python Extension: loading preset" << std::endl;
 
     char* preset_path_c_str;
     if(!PyArg_ParseTuple(args, "s", &preset_path_c_str)) {
         return NULL;
     }
-    // this crashes???
-    // std::string my_preset_path;
-    // my_preset_path = preset_path_c_str;
-
-    cout << "C++ - Python Extension: before loading preset: " << preset_path_c_str << endl;
+    // cout << "C++ - Python Extension: before loading preset: " << preset_path_c_str << endl;
 
     projectm_load_preset_file(_projectM, preset_path_c_str, false);
     return Py_BuildValue("");

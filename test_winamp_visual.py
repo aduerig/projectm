@@ -30,6 +30,7 @@ winamp_visual.setup_winamp()
 
 
 
+keys_to_proccess = []
 _return_code, stdout, _stderr = run_command_blocking([
     'xdotool',
     'getactivewindow',
@@ -55,7 +56,7 @@ def on_press(key):
     else:
         key_name = key.name
     if key_name in keyboard_dict:
-        keyboard_dict[key_name]()
+        keys_to_proccess.append(key_name)
 
 def on_release(key):
     if not window_focus():
@@ -72,7 +73,8 @@ def listen_for_keystrokes():
 
 
 def load_preset(preset_path):
-    print(f'Python: loading {preset_path}')
+    better_print = preset_path.relative_to(preset_path)
+    print_blue(f'Python: loading preset {better_print}')
     winamp_visual.load_preset(str(preset_path))
 
 
@@ -86,7 +88,7 @@ all_presets = list(get_all_paths(presets_directory, recursive=True, only_files=T
 print_green(f'{len(all_presets):,} milk visualizer presets to choose from')
 
 def random_preset():
-    preset_path = random.choice(all_presets)
+    preset_path = random.choice(all_presets)[1]
     load_preset(preset_path)
 
 
@@ -97,11 +99,21 @@ def print_grid_to_terminal():
     [print(''.join(f'\033[38;2;{rgb[0]};{rgb[1]};{rgb[2]}m▆\033[0m' for rgb in to_print_grid[x])) for x in range(20)]
     print('\033[F' * 20, end='')
 
+
+def increase_beat_sensitivity():
+    winamp_visual.set_beat_sensitivity(winamp_visual.get_beat_sensitivity() + .01)
+    print(f'beat sensitivity: {winamp_visual.get_beat_sensitivity()}')
+
+def decrease_beat_sensitivity():
+    winamp_visual.set_beat_sensitivity(winamp_visual.get_beat_sensitivity() - .01)
+    print(f'beat sensitivity: {winamp_visual.get_beat_sensitivity()}')
+
+
 keyboard_dict = {
     'r': lambda: random_preset(),
     'b': lambda: print(winamp_visual.get_beat_sensitivity()),
-    'up': lambda: winamp_visual.set_beat_sensitivity(winamp_visual.get_beat_sensitivity() + .01),
-    'down': lambda: winamp_visual.set_beat_sensitivity(winamp_visual.get_beat_sensitivity() - .01),
+    'up': lambda: increase_beat_sensitivity(),
+    'down': lambda: decrease_beat_sensitivity(),
     # 'left': lambda: restart_show(skip=-skip_time),
     # 'right': lambda: restart_show(skip=skip_time),
     # 'space': 'UV',
@@ -111,6 +123,12 @@ threading.Thread(target=listen_for_keystrokes, args=[], daemon=True).start()
 
 index = 0
 while True:
+    if len(keys_to_proccess) > 0:
+        key = keys_to_proccess.pop(0)
+        if key in keyboard_dict:
+            keyboard_dict[key]()
+        else:
+            print_red(f'Python: unknown key {key}')
     winamp_visual.render_frame()
     winamp_visual.load_into_numpy_array(grid)
     print_grid_to_terminal()
