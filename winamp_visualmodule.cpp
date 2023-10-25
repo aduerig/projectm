@@ -17,8 +17,10 @@
 
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_hints.h>
+
 
 #include <projectM-4/playlist.h>
 #include <projectM-4/projectM.h>
@@ -274,6 +276,7 @@ winamp_visual_setup_winamp(PyObject* self, PyObject* args) {
     //     throw std::runtime_error("OpenGL shader language version 3 or higher is required, but not available in the current context.");
     // }
 
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 
     SDL_version linked;
     SDL_GetVersion(&linked);
