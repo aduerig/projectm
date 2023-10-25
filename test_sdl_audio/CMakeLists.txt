@@ -7,33 +7,19 @@
 
 cmake_minimum_required(VERSION 3.21 FATAL_ERROR)
 
-include(CheckSymbolExists)
-
 project(test_sdl2 LANGUAGES C CXX)
 
+set(BIN_DIR "." CACHE STRING "Executable installation directory, relative to the install prefix.")
+set(LIB_DIR "." CACHE STRING "Library installation directory, relative to the install prefix.")
+set(INCLUDE_DIR "." CACHE STRING "Header installation directory, relative to the install prefix.")
 
-
-# set(PROJECTM_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
-# set(PROJECTM_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}")
-
-set(PROJECTM_BIN_DIR "." CACHE STRING "Executable installation directory, relative to the install prefix.")
-set(PROJECTM_LIB_DIR "." CACHE STRING "Library installation directory, relative to the install prefix.")
-set(PROJECTM_INCLUDE_DIR "." CACHE STRING "Header installation directory, relative to the install prefix.")
-
-
-add_executable(test_sdl2
-        test_sdl.cpp
-        )
-
-# glfw
-# SDL2::SDL2
-
+add_executable(test_sdl2 test_sdl.cpp)
 
 
 execute_process(COMMAND hostname OUTPUT_VARIABLE HOSTNAME OUTPUT_STRIP_TRAILING_WHITESPACE)
 if("${HOSTNAME}" STREQUAL "doorbell")
     message(STATUS "HOSTNAME IS DOORBELL!")
-    include_directories("/home/pi/random/sdl_install/SDL/include/")
+    # include_directories("/home/pi/random/sdl_install/SDL/include/")
     link_directories("/home/pi/random/sdl_install/SDL/build/.libs/")
     target_link_libraries(test_sdl2
         PRIVATE
