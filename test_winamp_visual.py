@@ -10,6 +10,12 @@
 # must be on 311..., not b311
 
 
+# FOR RASPERRY PI:
+    # RUNNING ONLY:
+        # LD_LIBRARY_PATH=src/libprojectM:/home/pi/random/sdl_install/SDL/build/.libs python test_winamp_visual.py
+    # PARTIAL BUILD:
+        # 
+
 
 import sys
 import time
