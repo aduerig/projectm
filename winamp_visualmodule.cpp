@@ -182,12 +182,16 @@ winamp_visual_setup_winamp(PyObject* self, PyObject* args) {
 
     if (SDL_Init(SDL_INIT_AUDIO) != 0) {
         SDL_Log("Unable to initialize SDL AUDIO: %s", SDL_GetError());
+        PyErr_SetString(PyExc_ValueError, "look up at sdl error");
+        return NULL;
     }
     openAudioInput();
 
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         SDL_Log("Unable to initialize SDL VIDEO: %s", SDL_GetError());
+        PyErr_SetString(PyExc_ValueError, "look up at sdl error");
+        return NULL;
     }
     
     std::cout << "C++ - Python Extension: setting up winamp" << std::endl;
