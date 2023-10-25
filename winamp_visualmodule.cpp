@@ -167,9 +167,111 @@ void openAudioInput() {
 //     SDL_CloseAudioDevice(_audioDeviceId);
 // }
 
+struct GlslVersion {
+    int major{}; //!< Major OpenGL shading language version
+    int minor{}; //!< Minor OpenGL shading language version
+};
+
+GlslVersion QueryGlslVersion() {
+    /* In the linux desktop environment with --use-gles configured, the parsing of the GL_SHADING_LANGUAGE_VERSION
+     * string comes back as "OpenGL ES GLSL ES 3"
+     * And I think this was supposed to be parsing something like
+     * "3.10 etc etc"
+     * This caused exceptions to be raised in the std::stoi section;
+     *
+     * So - The parsing will look for <anything> <number> ['.' <number>] [<anything else>]
+     * and will default to 3.0 for the version in case of errors
+     */
+    int major = 3; /* 3.0 is default */
+    int minor = 0;
+
+    const char* shaderLanguageVersion = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+    if (shaderLanguageVersion == nullptr) {
+        cout << "shaderLanguageVersion is null" << endl;
+        return GlslVersion{0, 0};
+    }
+
+    std::string glslVersionString{shaderLanguageVersion};
+
+    size_t versionLength = glslVersionString.length();
+    /* make a c version of the string and do the conversion to integers manually just for this case */
+    if (versionLength) { // find the number
+        size_t position = 0;
+        char* cstr = new char[versionLength + 1];
+
+        strcpy(cstr, glslVersionString.c_str());
+
+        /* scan the anything before the number */
+        while (position < versionLength)
+        {
+            char ch = cstr[position];
+            if ((ch >= '0') && (ch <= '9'))
+            {
+                break;
+            }
+            position++;
+        }
+
+        /* scan the first number */
+        {
+            int possible_major = 0;
+            while (position < versionLength)
+            {
+                char ch = cstr[position];
+                if ((ch >= '0') && (ch <= '9'))
+                {
+                    possible_major = (possible_major * 10) + ch - '0';
+                }
+                else if (ch == '.')
+                { /* got the minor */
+                    int possible_minor = 0;
+                    position++;
+                    while (position < versionLength)
+                    {
+                        ch = cstr[position];
+                        if ((ch >= '0') && (ch <= '9'))
+                        {
+                            possible_minor = (possible_minor * 10) + ch - '0';
+                        }
+                        else
+                            break;
+                        position++;
+                    } /* while scanning the minor version */
+                    if (possible_major)
+                    { /* set the minor version only if the major number is valid */
+                        minor = possible_minor;
+                    }
+                    break; // We scanned it
+                }
+                else
+                { /* not a number or period */
+                    break;
+                }
+                position++;
+            } /* while scanning the major number */
+            if (possible_major)
+            {
+                major = possible_major;
+            }
+        } /* scanning block */
+        delete[] cstr;
+    } /* if there is a string to parse */
+
+    return {major, minor};
+}
 
 static PyObject*
 winamp_visual_setup_winamp(PyObject* self, PyObject* args) {
+
+    // if (m_GLSLVersion.major == 0)
+    // {
+    //     throw std::runtime_error("Could not retrieve OpenGL shader language version. Is OpenGL available and the context initialized?");
+    // }
+    // if (m_GLSLVersion.major < 3)
+    // {
+    //     throw std::runtime_error("OpenGL shader language version 3 or higher is required, but not available in the current context.");
+    // }
 
 
     SDL_version linked;
@@ -197,11 +299,14 @@ winamp_visual_setup_winamp(PyObject* self, PyObject* args) {
     SDL_Window* window = SDL_CreateWindow("", 0, 0, 32, 20, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
     SDL_GL_CreateContext(window);
 
+    GlslVersion m_GLSLVersion{0, 0};
+    m_GLSLVersion = QueryGlslVersion();
+    cout << "C++ - Python Extension: Using OpenGL shader language version " << m_GLSLVersion.major << "." << m_GLSLVersion.minor << "\n";
+
 
     std::cout << "C++ - Python Extension: setting up winamp" << std::endl;
     _projectM = projectm_create();
     projectm_set_window_size(_projectM, 32, 20);
-
 
 
     std::cout << "C++ - Python Extension: opening audio" << std::endl;

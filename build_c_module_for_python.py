@@ -111,7 +111,7 @@ the_module = Extension(
     library_dirs=library_dirs,
     # tries to do a .so (dynamic) build with this
     # needs numpy!!
-    libraries = ['projectM-4', 'GL', 'SDL2', 'SDL2main', 'dl', 'asound', 'pulse-simple', 'pulse', 'm', 'X11', 'Xext', 'Xcursor', 'Xinerama', 'Xi', 'Xrandr', 'Xss', 'Xxf86vm', 'rt', 'EGL'], # 'pthread' # glfw 
+    libraries = ['projectM-4', 'GL', 'SDL2', 'SDL2main', 'dl', 'asound', 'pulse-simple', 'pulse', 'm', 'X11', 'Xext', 'Xcursor', 'Xinerama', 'Xi', 'Xrandr', 'Xss', 'Xxf86vm', 'rt', 'EGL', 'pthread'], # 'pthread' # glfw 
     extra_compile_args=extra_compile_args + python_extra_compile_args,
     extra_link_args=extra_link_args + python_extra_link_args,
 )
