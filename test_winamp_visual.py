@@ -15,9 +15,10 @@
         # LD_LIBRARY_PATH=src/libprojectM:/home/pi/random/sdl_install/SDL/build/.libs/ python test_winamp_visual.py
     # PARTIAL BUILD:
         # rm winamp_visual.cpython-311-x86_64-linux-gnu.so; python build_c_module_for_python.py build --build-lib=. && LD_LIBRARY_PATH=src/libprojectM:/home/pi/random/sdl_install/SDL/build/.libs/ python test_winamp_visual.py
-
     # FULL BUILD:
-        # rm CMakeCache.txt; cmake -DCMAKE_BUILD_TYPE=Release && cmake --build . && rm winamp_visual.cpython-311-x86_64-linux-gnu.so; python build_c_module_for_python.py build --build-lib=. && LD_LIBRARY_PATH=src/libprojectM:/home/pi/random/sdl_install/SDL/build/.libs/ python test_winamp_visual.py
+        # rm CMakeCache.txt; cmake -DCMAKE_BUILD_TYPE=Release && cmake --build . -- j3 && rm winamp_visual.cpython-311-x86_64-linux-gnu.so; python build_c_module_for_python.py build --build-lib=. && LD_LIBRARY_PATH=src/libprojectM:/home/pi/random/sdl_install/SDL/build/.libs/ python test_winamp_visual.py
+
+
 
 import sys
 import time

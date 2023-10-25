@@ -81,7 +81,7 @@ library_dirs = [
 ]
 
 if is_doorbell():
-    custom_sdl_build = pathlib.Path('/home/pi/random/sdl_install/SDL/')
+    custom_sdl_build = pathlib.Path('/home/pi/random/sdl_install/SDL-release-2.28.4/')
     include_dirs.append(str(custom_sdl_build))
     library_dirs.append(str(custom_sdl_build.joinpath('build', '.libs')))
     print_blue(f'IS DOORBELL ADDING CUSTOM DIRS: {library_dirs[-1]}, {include_dirs[-1]}')
