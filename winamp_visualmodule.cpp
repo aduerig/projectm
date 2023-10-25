@@ -144,23 +144,31 @@ void openAudioInput() {
 static PyObject*
 winamp_visual_setup_winamp(PyObject* self, PyObject* args) {
 
+
+    SDL_version linked;
+    SDL_GetVersion(&linked);
+    // std::cout << "C++ - Python Extension: Using SDL version " << linked.major << "." << linked.minor << "." << linked.patch << "\n";
+    SDL_Log("Using SDL version %d.%d.%d\n", linked.major, linked.minor, linked.patch);
+
+
+    SDL_SetHint(SDL_HINT_AUDIO_INCLUDE_MONITORS, "1"); // this allows listening to speakers
+
+    if (SDL_Init(SDL_INIT_AUDIO) != 0) {
+        SDL_Log("Unable to initialize SDL AUDIO: %s", SDL_GetError());
+    }
+    openAudioInput();
+
+
+    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+        SDL_Log("Unable to initialize SDL VIDEO: %s", SDL_GetError());
+    }
+    
     std::cout << "C++ - Python Extension: setting up winamp" << std::endl;
     _projectM = projectm_create();
     projectm_set_window_size(_projectM, 32, 20);
 
 
-
-    // SDL 
-    SDL_SetHint(SDL_HINT_AUDIO_INCLUDE_MONITORS, "1"); // this allows listening to speakers
-
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
-        SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
-    }
-
-    std::cout << "C++ - Python Extension: setting up sdl OR glfw window" << std::endl;
-
-
-    openAudioInput();
+    std::cout << "C++ - Python Extension: setting up sdl window" << std::endl;
 
 
     // SDL
@@ -386,9 +394,3 @@ PyInit_winamp_visual(void) {
     import_array();
     return PyModule_Create(&winamp_visualmodule);
 }
-
-
-// SDL_version linked;
-// SDL_GetVersion(&linked);
-// // std::cout << "C++ - Python Extension: Using SDL version " << linked.major << "." << linked.minor << "." << linked.patch << "\n";
-// SDL_Log("Using SDL version %d.%d.%d\n", linked.major, linked.minor, linked.patch);
