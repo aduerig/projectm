@@ -89,8 +89,13 @@ if(ENABLE_GLES)
     # list(APPEND CMAKE_MODULE_PATH "${PROJECTM_SOURCE_DIR}/cmake/gles")
     # find_package(OpenGL REQUIRED COMPONENTS GLES2)
     # find_package(OpenGL REQUIRED COMPONENTS GLES2)
-    find_package(OpenGL REQUIRED COMPONENTS GLES3 PATHS /usr/lib/aarch64-linux-gnu)
+    # find_package(OpenGL REQUIRED COMPONENTS GLES3 PATHS /usr/lib/aarch64-linux-gnu)
     
+    add_library(OpenGL::GLES3 INTERFACE IMPORTED)
+    target_include_directories(OpenGL::GLES3 INTERFACE /usr/include/GLES3/)
+    # /usr/lib/aarch64-linux-gnu/libGLESv2.so
+    target_link_libraries(OpenGL::GLES3 INTERFACE /usr/lib/aarch64-linux-gnu/libGLESv2.so)
+
     if(NOT TARGET OpenGL::GLES3)
         message(FATAL_ERROR "No suitable GLES3 library was found.")
     endif()
