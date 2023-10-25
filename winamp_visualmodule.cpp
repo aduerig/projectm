@@ -404,8 +404,7 @@ PyMODINIT_FUNC
 PyInit_winamp_visual(void) {
     import_array();
     if (gethostname(hostname, sizeof(hostname)) == -1) {
-        perror("gethostname");
-        return 1;
+        cout << "gethostname ERROR" << endl;
     }
     return PyModule_Create(&winamp_visualmodule);
 }
