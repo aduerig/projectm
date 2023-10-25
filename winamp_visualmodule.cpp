@@ -185,8 +185,6 @@ winamp_visual_setup_winamp(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_ValueError, "look up at sdl error");
         return NULL;
     }
-    openAudioInput();
-
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         SDL_Log("Unable to initialize SDL VIDEO: %s", SDL_GetError());
@@ -195,6 +193,7 @@ winamp_visual_setup_winamp(PyObject* self, PyObject* args) {
     }
 
     // SDL
+    std::cout << "C++ - Python Extension: setting up sdl window" << std::endl;
     SDL_Window* window = SDL_CreateWindow("", 0, 0, 32, 20, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
     SDL_GL_CreateContext(window);
 
@@ -204,7 +203,9 @@ winamp_visual_setup_winamp(PyObject* self, PyObject* args) {
     projectm_set_window_size(_projectM, 32, 20);
 
 
-    std::cout << "C++ - Python Extension: setting up sdl window" << std::endl;
+
+    std::cout << "C++ - Python Extension: opening audio" << std::endl;
+    openAudioInput();
 
 
     // GLFW
