@@ -93,7 +93,6 @@ if(ENABLE_GLES)
     
     add_library(OpenGL::GLES3 INTERFACE IMPORTED)
     target_include_directories(OpenGL::GLES3 INTERFACE /usr/include/GLES3/)
-    # /usr/lib/aarch64-linux-gnu/libGLESv2.so
     target_link_libraries(OpenGL::GLES3 INTERFACE /usr/lib/aarch64-linux-gnu/libGLESv2.so)
 
     if(NOT TARGET OpenGL::GLES3)

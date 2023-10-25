@@ -65,6 +65,10 @@ built:
     -L/home/pi/random/sdl_install/lib -Wl,-rpath,/home/pi/random/sdl_install/lib -Wl,--enable-new-dtags -lSDL2
 
 
+building sdl2:
+    ./configure --enable-video-kmsdrm
+
+    cp -r include SDL2
 
 
 
