@@ -166,7 +166,7 @@ keyboard_dict = {
 }
 
 start_listen_keys()
-# exit()
+exit()
 while True:
     if len(keys_to_proccess) > 0:
         key = keys_to_proccess.popleft()
