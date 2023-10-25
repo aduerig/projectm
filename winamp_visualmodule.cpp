@@ -193,18 +193,18 @@ winamp_visual_setup_winamp(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_ValueError, "look up at sdl error");
         return NULL;
     }
-    
+
+    // SDL
+    SDL_Window* window = SDL_CreateWindow("", 0, 0, 32, 20, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
+    SDL_GL_CreateContext(window);
+
+
     std::cout << "C++ - Python Extension: setting up winamp" << std::endl;
     _projectM = projectm_create();
     projectm_set_window_size(_projectM, 32, 20);
 
 
     std::cout << "C++ - Python Extension: setting up sdl window" << std::endl;
-
-
-    // SDL
-    SDL_Window* window = SDL_CreateWindow("", 0, 0, 32, 20, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
-    SDL_GL_CreateContext(window);
 
 
     // GLFW
