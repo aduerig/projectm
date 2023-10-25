@@ -56,7 +56,7 @@ option(BUILD_SHARED_LIBS "Build and install libprojectM as a shared libraries. I
 option(ENABLE_PLAYLIST "Enable building the playlist management library" ON)
 option(ENABLE_SDL_UI "Build the SDL2-based developer test UI" OFF)
 option(ENABLE_OPENMP "Enable OpenMP support if available" ON)
-option(ENABLE_THREADING "Enable multithreading support." ON)
+option(ENABLE_THREADING "Enable multithreading support." OFF) # !TODO I CHANGED THIS
 option(ENABLE_SYSTEM_GLM "Enable use of system-install GLM library" OFF)
 option(ENABLE_GLES "Enable OpenGL ES support" ON)
 
