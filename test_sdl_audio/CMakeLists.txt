@@ -20,12 +20,8 @@ add_executable(test_sdl2
         test_sdl.cpp
         )
 
-target_link_libraries(test_sdl2
-        PRIVATE
-        glfw
-        SDL2::SDL2
-        ${CMAKE_DL_LIBS}
-        )
+# glfw
+# SDL2::SDL2
 
 
 
@@ -34,10 +30,21 @@ if("${HOSTNAME}" STREQUAL "doorbell")
     message(STATUS "Hostname is doorbell!")
     include_directories("/home/pi/random/sdl_install/SDL/include/")
     link_directories("/home/pi/random/sdl_install/SDL/build/.libs/")
-    target_link_libraries(test_sdl2 SDL2)
+    target_link_libraries(test_sdl2
+        PRIVATE
+        SDL2
+        ${CMAKE_DL_LIBS}
+    )
+
 else()
     message(STATUS "Hostname is NOT doorbell!")
     find_package(SDL2 REQUIRED)
+    target_link_libraries(test_sdl2
+        PRIVATE
+        SDL2::SDL2
+        ${CMAKE_DL_LIBS}
+    )
+
 endif()
 
 
