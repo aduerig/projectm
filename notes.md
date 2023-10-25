@@ -16,6 +16,9 @@ ON RASP PI:
 rm CMakeCache.txt; cmake CMakeLists.txt && cmake --build . && ./test_sdl2
 
 
+https://gist.github.com/n8allan/4cd46396c86cb00fd35cb399515d31df
+https://github.com/matusnovak/rpi-opengl-without-x
+
 
 
 

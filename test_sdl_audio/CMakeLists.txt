@@ -22,11 +22,13 @@ add_executable(test_sdl2
 
 target_link_libraries(test_sdl2
         PRIVATE
+        glfw
         SDL2::SDL2
         ${CMAKE_DL_LIBS}
         )
 
 find_package(SDL2 REQUIRED)
+find_package(glfw3 REQUIRED)
 
 get_target_property(_SDL2_INCLUDE_DIR SDL2::SDL2 INTERFACE_INCLUDE_DIRECTORIES)
 if(_SDL2_INCLUDE_DIR MATCHES "(.+)/SDL2\$" AND _SDL2_TARGET_TYPE STREQUAL STATIC_LIBRARY)

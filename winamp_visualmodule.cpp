@@ -23,6 +23,8 @@
 #include <projectM-4/projectM.h>
 
 #include <numpy/arrayobject.h>  // For the numpy C-API
+// glfw
+#include <GLFW/glfw3.h>
 
 // #include "my_sdl.cpp"
 
@@ -156,16 +158,19 @@ winamp_visual_setup_winamp(PyObject* self, PyObject* args) {
     std::cout << "C++ - Python Extension: setting up sdl OR glfw window" << std::endl;
 
 
-    SDL_Window* window = SDL_CreateWindow("", 0, 0, 32, 20, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
-    SDL_GL_CreateContext(window);
+    // SDL_Window* window = SDL_CreateWindow("", 0, 0, 32, 20, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
+    // SDL_GL_CreateContext(window);
 
     openAudioInput();
 
     // GLFW
-    // glfwInit();
-    // glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);  // Make window hidden
-    // GLFWwindow* window = glfwCreateWindow(640, 480, "", NULL, NULL);
-    // glfwMakeContextCurrent(window);
+    int return_val = glfwInit();
+    if (return_val == GLFW_FALSE) {
+        std::cout << "C++ - Python Extension: glfwInit() failed" << std::endl;
+    }
+    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);  // Make window hidden
+    GLFWwindow* window = glfwCreateWindow(640, 480, "", NULL, NULL);
+    glfwMakeContextCurrent(window);
 
     // EGL
     // EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
