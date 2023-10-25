@@ -186,6 +186,7 @@ GlslVersion QueryGlslVersion() {
     int minor = 0;
 
     const char* shaderLanguageVersion = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
+    cout << "raw shaderLanguageVersion: " << shaderLanguageVersion << endl;
 
     if (shaderLanguageVersion == nullptr) {
         cout << "shaderLanguageVersion is null" << endl;
