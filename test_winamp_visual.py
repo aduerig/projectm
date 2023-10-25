@@ -12,9 +12,9 @@
 
 # FOR RASPERRY PI:
     # RUNNING ONLY:
-        # LD_LIBRARY_PATH=src/libprojectM:/home/pi/random/sdl_install/SDL/build/.libs python test_winamp_visual.py
+        # LD_LIBRARY_PATH=src/libprojectM:/home/pi/random/sdl_install/SDL/build/.libs/ python test_winamp_visual.py
     # PARTIAL BUILD:
-        # 
+        # LD_LIBRARY_PATH=src/libprojectM:/home/pi/random/sdl_install/SDL/build/.libs/ python test_winamp_visual.py
 
 
 import sys

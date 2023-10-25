@@ -63,11 +63,6 @@ void audioInputCallbackF32(void *userdata, unsigned char *stream, int len) {
 }
 
 char hostname[1024];
-if (gethostname(hostname, sizeof(hostname)) == -1) {
-    perror("gethostname");
-    return 1;
-}
-
 
 int initAudioInput(int selected_device) {
     SDL_AudioSpec want, have;
@@ -408,5 +403,9 @@ static struct PyModuleDef winamp_visualmodule = {
 PyMODINIT_FUNC
 PyInit_winamp_visual(void) {
     import_array();
+    if (gethostname(hostname, sizeof(hostname)) == -1) {
+        perror("gethostname");
+        return 1;
+    }
     return PyModule_Create(&winamp_visualmodule);
 }
