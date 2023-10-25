@@ -108,7 +108,7 @@ void openAudioInput() {
 
 int main() {
     // to allow sdl to see speakers
-    SDL_SetHint(SDL_HINT_AUDIO_INCLUDE_MONITORS, "1");
+    // SDL_SetHint(SDL_HINT_AUDIO_INCLUDE_MONITORS, "1");
 
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
@@ -127,9 +127,7 @@ int main() {
     SDL_Window* window = SDL_CreateWindow("", 0, 0, 32, 20, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
     SDL_GL_CreateContext(window);
 
-
-
-    openAudioInput();
+    // openAudioInput();
 }
 
 
