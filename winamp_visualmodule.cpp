@@ -23,10 +23,12 @@
 #include <projectM-4/projectM.h>
 
 #include <numpy/arrayobject.h>  // For the numpy C-API
-// glfw
-#include <GLFW/glfw3.h>
 
-// #include "my_sdl.cpp"
+// glfw
+// #include <GLFW/glfw3.h>
+
+// egl
+#include <EGL/egl.h>
 
 using namespace std;
 
@@ -158,47 +160,60 @@ winamp_visual_setup_winamp(PyObject* self, PyObject* args) {
     std::cout << "C++ - Python Extension: setting up sdl OR glfw window" << std::endl;
 
 
+    openAudioInput();
+
+
+    // SDL
     // SDL_Window* window = SDL_CreateWindow("", 0, 0, 32, 20, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
     // SDL_GL_CreateContext(window);
 
-    openAudioInput();
 
     // GLFW
-    int return_val = glfwInit();
-    if (return_val == GLFW_FALSE) {
-        std::cout << "C++ - Python Extension: glfwInit() failed" << std::endl;
-    }
-    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);  // Make window hidden
-    GLFWwindow* window = glfwCreateWindow(640, 480, "", NULL, NULL);
-    glfwMakeContextCurrent(window);
+    // int return_val = glfwInit();
+    // if (return_val == GLFW_FALSE) {
+    //     std::cout << "C++ - Python Extension: glfwInit() failed" << std::endl;
+    // }
+    // glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);  // Make window hidden
+    // GLFWwindow* window = glfwCreateWindow(640, 480, "", NULL, NULL);
+    // glfwMakeContextCurrent(window);
+
 
     // EGL
-    // EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-    // eglInitialize(display, NULL, NULL);
+    EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    if (eglGetError() != EGL_SUCCESS) {
+        cout << "C++ - Python Extension: eglGetDisplay() failed" << endl;
+    }
+    
+    EGLint major, minor;
+    if (!eglInitialize(display, &major, &minor)) {
+        cout << "C++ - Python Extension: eglInitialize() failed" << endl;
+        exit(1);
+    }
 
-    // EGLint configAttribs[] = {
-    //     EGL_SURFACE_TYPE, EGL_PBUFFER_BIT,
-    //     EGL_BLUE_SIZE, 8,
-    //     EGL_GREEN_SIZE, 8,
-    //     EGL_RED_SIZE, 8,
-    //     EGL_DEPTH_SIZE, 8,
-    //     EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
-    //     EGL_NONE
-    // };
-    // EGLConfig config;
-    // EGLint numConfigs;
-    // eglChooseConfig(display, configAttribs, &config, 1, &numConfigs);
+    EGLint configAttribs[] = {
+        EGL_SURFACE_TYPE, EGL_PBUFFER_BIT,
+        EGL_BLUE_SIZE, 8,
+        EGL_GREEN_SIZE, 8,
+        EGL_RED_SIZE, 8,
+        EGL_DEPTH_SIZE, 8,
+        EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
+        EGL_NONE
+    };
+    EGLConfig config;
+    EGLint numConfigs;
+    eglChooseConfig(display, configAttribs, &config, 1, &numConfigs);
 
-    // EGLint pbufferAttribs[] = {
-    //     EGL_WIDTH, 640,
-    //     EGL_HEIGHT, 480,
-    //     EGL_NONE,
-    // };
-    // EGLSurface surface = eglCreatePbufferSurface(display, config, pbufferAttribs);
+    EGLint pbufferAttribs[] = {
+        EGL_WIDTH, 640,
+        EGL_HEIGHT, 480,
+        EGL_NONE,
+    };
+    EGLSurface surface = eglCreatePbufferSurface(display, config, pbufferAttribs);
 
-    // EGLContext context = eglCreateContext(display, config, EGL_NO_CONTEXT, NULL);
-    // eglMakeCurrent(display, surface, surface, context);
+    EGLContext context = eglCreateContext(display, config, EGL_NO_CONTEXT, NULL);
+    eglMakeCurrent(display, surface, surface, context);
 
+    cout << "C++ - Python Extension: AFTER SETUP" << endl;
     return Py_BuildValue("");
 }
 

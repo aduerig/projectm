@@ -11,7 +11,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_hints.h>
 
-#include <GLFW/glfw3.h>
+// #include <GLFW/glfw3.h>
 
 using namespace std;
 
@@ -89,15 +89,6 @@ void openAudioInput() {
         std::cout << "python/c++: Found audio capture device: " << i << ", " << SDL_GetAudioDeviceName(i, true) << std::endl;
     }
 
-    if (!glfwInit()) {
-        std::cout << "C++ - Python Extension: glfwInit() failed" << std::endl;
-        return;
-    }
-    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);  // Make window hidden
-    GLFWwindow* window = glfwCreateWindow(640, 480, "", NULL, NULL);
-    glfwMakeContextCurrent(window);
-    cout << "C++ - Python Extension: after glfwInit()" << endl;
-
     return;
 
     // We start with the system default capture device (index -1).
@@ -129,16 +120,12 @@ int main() {
         SDL_Log("Unable to initialize SDL audio: %s", SDL_GetError());
     }
 
-    // if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-    //     SDL_Log("Unable to initialize SDL video: %s", SDL_GetError());
-    // }
+    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+        SDL_Log("Unable to initialize SDL video: %s", SDL_GetError());
+    }
 
-
-    // real is:     2.28.4
-    // ours is also 2.28.4
     SDL_version linked;
     SDL_GetVersion(&linked);
-    // std::cout << "C++ - Python Extension: Using SDL version " << linked.major << "." << linked.minor << "." << linked.patch << "\n";
     SDL_Log("Using SDL version %d.%d.%d\n", linked.major, linked.minor, linked.patch);
 
     std::cout << "C++ - Python Extension: after up winamp" << std::endl;
@@ -149,6 +136,9 @@ int main() {
 
     openAudioInput();
 }
+
+
+
 
 
 // real
@@ -169,3 +159,14 @@ int main() {
 // python/c++: Found audio capture device: 0, Starship/Matisse HD Audio Controller Analog Stereo
 // python/c++: WARNING Wasnt able to see the device id: 4
 // python/c++: Failed to open audio capture device
+
+
+
+// if (!glfwInit()) {
+//     std::cout << "C++ - Python Extension: glfwInit() failed" << std::endl;
+//     return;
+// }
+// glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);  // Make window hidden
+// GLFWwindow* window = glfwCreateWindow(640, 480, "", NULL, NULL);
+// glfwMakeContextCurrent(window);
+// cout << "C++ - Python Extension: after glfwInit()" << endl;
