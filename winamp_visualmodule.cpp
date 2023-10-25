@@ -17,8 +17,6 @@
 
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 
-// #include <EGL/egl.h>
-
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_hints.h>
 
@@ -31,7 +29,7 @@
 // #include <GLFW/glfw3.h>
 
 // egl
-#include <EGL/egl.h>
+// #include <EGL/egl.h>
 
 using namespace std;
 
@@ -49,7 +47,10 @@ void audioInputCallbackF32(void *userdata, unsigned char *stream, int len) {
     // projectm_handle *_projectM = (projectm_handle *) userdata;
 
     // TODO look into this
+
+    cout << "before audioInputCallbackF32" << endl;
     projectm_pcm_add_float(_projectM, reinterpret_cast<float*>(stream), len/sizeof(float)/2, PROJECTM_STEREO);
+    cout << "after audioInputCallbackF32 " << endl;
     // projectm_pcm_add_float(_projectM, reinterpret_cast<float*>(stream), len/sizeof(float)/2, PROJECTM_MONO);
 
     // if (_audioChannelsCount == 1)

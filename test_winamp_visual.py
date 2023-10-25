@@ -14,7 +14,7 @@
     # RUNNING ONLY:
         # LD_LIBRARY_PATH=src/libprojectM:/home/pi/random/sdl_install/SDL/build/.libs/ python test_winamp_visual.py
     # PARTIAL BUILD:
-        # LD_LIBRARY_PATH=src/libprojectM:/home/pi/random/sdl_install/SDL/build/.libs/ python test_winamp_visual.py
+        # rm winamp_visual.cpython-311-x86_64-linux-gnu.so; python build_c_module_for_python.py build --build-lib=. && LD_LIBRARY_PATH=src/libprojectM:/home/pi/random/sdl_install/SDL/build/.libs/ python test_winamp_visual.py
 
 
 import sys
