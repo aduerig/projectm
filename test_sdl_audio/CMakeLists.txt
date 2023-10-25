@@ -20,10 +20,9 @@ execute_process(COMMAND hostname OUTPUT_VARIABLE HOSTNAME OUTPUT_STRIP_TRAILING_
 if("${HOSTNAME}" STREQUAL "doorbell")
     message(STATUS "HOSTNAME IS DOORBELL!")
     target_include_directories(test_sdl2 PRIVATE BEFORE "/home/pi/random/sdl_install/SDL/include/")
-    # link_directories(test_sdl2 PRIVATE BEFORE "")
     target_link_libraries(test_sdl2
         PRIVATE
-        /home/pi/random/sdl_install/SDL/build/.libs/libS2DL2.so
+        /home/pi/random/sdl_install/SDL/build/.libs/libSDL2.so
         ${CMAKE_DL_LIBS}
     )
 

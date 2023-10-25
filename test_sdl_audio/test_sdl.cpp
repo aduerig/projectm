@@ -8,12 +8,19 @@
 #include <string>
 
 
-#include <SDL2/SDL.h>
 #include <SDL2/SDL_hints.h>
+#include <SDL2/SDL.h>
+
+// #include "/home/pi/random/sdl_install/SDL/include/SDL"
+
+
 
 // #include <GLFW/glfw3.h>
 
 using namespace std;
+
+
+// g++ -I/home/pi/random/sdl_install/SDL/ -L/home/pi/random/sdl_install/SDL/build/.libs -lSDL2 test_sdl.cpp -o test_minimal
 
 
 void audioInputCallbackF32(void *userdata, unsigned char *stream, int len) {
