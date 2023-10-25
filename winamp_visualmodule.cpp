@@ -11,6 +11,9 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <iostream>
+#include <cstring>      // for strcmp
+#include <unistd.h>     // for gethostname
 
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 
@@ -59,6 +62,11 @@ void audioInputCallbackF32(void *userdata, unsigned char *stream, int len) {
     // }
 }
 
+char hostname[1024];
+if (gethostname(hostname, sizeof(hostname)) == -1) {
+    perror("gethostname");
+    return 1;
+}
 
 
 int initAudioInput(int selected_device) {
@@ -123,7 +131,15 @@ void openAudioInput() {
 
     }
 
-    int device_id_to_open = 3; // henry monitor on andrew arch linux
+    int device_id_to_open;
+    if (strcmp(hostname, "doorbell") == 0) {
+        std::cout << "This machine's hostname is doorbell!" << std::endl;
+        device_id_to_open = 0;
+    } else {
+        std::cout << "This machine's hostname is not doorbell!" << std::endl;
+        device_id_to_open = 3;
+    }
+
     int actual_audio_device_id_opened = initAudioInput(device_id_to_open);
     if (actual_audio_device_id_opened != -1) {
         std::cout << "python/c++: Opened audio capture device" << std::endl;
