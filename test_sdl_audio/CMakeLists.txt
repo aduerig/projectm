@@ -25,7 +25,6 @@ if("${HOSTNAME}" STREQUAL "doorbell")
         /home/pi/random/sdl_install/SDL/build/.libs/libSDL2.so
         ${CMAKE_DL_LIBS}
     )
-
 else()
     message(STATUS "HOSTNAME IS NOTTTTT DOORBELL!")
     find_package(SDL2 REQUIRED)

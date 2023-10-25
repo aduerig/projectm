@@ -73,9 +73,15 @@ else()
 endif()
 
 if(ENABLE_SDL_UI)
-    find_package(SDL2 REQUIRED)
-    # include(SDL2Target)
+    execute_process(COMMAND hostname OUTPUT_VARIABLE HOSTNAME OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if("${HOSTNAME}" STREQUAL "doorbell")
+        message(STATUS "HOSTNAME IS DOORBELL!")
+    else()
+        message(STATUS "HOSTNAME IS NOTTTTT DOORBELL!")
+        find_package(SDL2 REQUIRED)
+    endif()
 endif()
+
 
 if(ENABLE_GLES)
     message(STATUS "Building for OpenGL Embedded Profile")

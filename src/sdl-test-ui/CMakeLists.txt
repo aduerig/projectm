@@ -12,11 +12,26 @@ add_executable(projectM-Test-UI
         setup.hpp
         )
 
-target_link_libraries(projectM-Test-UI
-        PRIVATE
-        libprojectM::playlist
-        GLM::GLM
-        SDL2::SDL2
-        SDL2::SDL2main
-        ${CMAKE_DL_LIBS}
+
+execute_process(COMMAND hostname OUTPUT_VARIABLE HOSTNAME OUTPUT_STRIP_TRAILING_WHITESPACE)
+if("${HOSTNAME}" STREQUAL "doorbell")
+        message(STATUS "HOSTNAME IS DOORBELL!")
+        target_include_directories(projectM-Test-UI PRIVATE BEFORE "/home/pi/random/sdl_install/SDL/")
+        target_link_libraries(projectM-Test-UI
+            PRIVATE
+            /home/pi/random/sdl_install/SDL/build/.libs/libSDL2.so
+            ${CMAKE_DL_LIBS}
         )
+
+else()
+        message(STATUS "HOSTNAME IS NOTTTTT DOORBELL!")
+        target_link_libraries(projectM-Test-UI
+                PRIVATE
+                libprojectM::playlist
+                GLM::GLM
+                SDL2::SDL2
+                SDL2::SDL2main
+                ${CMAKE_DL_LIBS}
+        )
+endif()
+
