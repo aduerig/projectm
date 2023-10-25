@@ -84,6 +84,7 @@ if is_doorbell():
     custom_sdl_build = pathlib.Path('/home/pi/random/sdl_install/SDL/')
     include_dirs.append(str(custom_sdl_build))
     library_dirs.append(str(custom_sdl_build.joinpath('build', '.libs')))
+    print_blue(f'IS DOORBELL ADDING CUSTOM DIRS: {library_dirs[-1]}, {include_dirs[-1]}')
 
 sources = [
     str(this_file_directory.joinpath('winamp_visualmodule.cpp')),
