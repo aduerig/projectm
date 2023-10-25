@@ -86,6 +86,8 @@ void openAudioInput() {
         std::cout << "python/c++: Found audio capture device: " << i << ", " << SDL_GetAudioDeviceName(i, true) << std::endl;
     }
 
+    return;
+
     // We start with the system default capture device (index -1).
     // Note: this might work even if NumAudioDevices == 0 (example: if only a
     // monitor device exists, and SDL_HINT_AUDIO_INCLUDE_MONITORS is not set).
@@ -127,7 +129,7 @@ int main() {
     SDL_Window* window = SDL_CreateWindow("", 0, 0, 32, 20, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
     SDL_GL_CreateContext(window);
 
-    // openAudioInput();
+    openAudioInput();
 }
 
 
