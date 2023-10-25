@@ -40,6 +40,20 @@ winamp_visual_systemcall(PyObject* self, PyObject* args) {
     return PyLong_FromLong(system(command));
 }
 
+// [Switching to Thread 0x7fc7fff1c0 (LWP 40187)]
+// 0x0000007fed5209b0 in libprojectM::Audio::PCM::AddStereo(float const*, unsigned long) () from src/libprojectM/libprojectM-4.so.4
+// (gdb) bt
+// #0  0x0000007fed5209b0 in libprojectM::Audio::PCM::AddStereo(float const*, unsigned long) () from src/libprojectM/libprojectM-4.so.4
+// #1  0x0000007fed1a9864 in SDL_CaptureAudio (devicep=devicep@entry=0xdf1250)
+//     at /home/pi/random/sdl_install/SDL-release-2.28.4/src/audio/SDL_audio.c:860
+// #2  0x0000007fed227f00 in SDL_RunThread (thread=0xdfb980)
+//     at /home/pi/random/sdl_install/SDL-release-2.28.4/src/thread/SDL_thread.c:292
+// #3  0x0000007fed2ca0fc in RunThread (data=<optimized out>)
+//     at /home/pi/random/sdl_install/SDL-release-2.28.4/src/thread/pthread/SDL_systhread.c:76
+// #4  0x0000007ff7f94648 in start_thread (arg=0x7fc7ffeac0)
+//     at pthread_create.c:477
+// #5  0x0000007ff7db5fdc in thread_start ()
+//     at ../sysdeps/unix/sysv/linux/aarch64/clone.S:78
 
 projectm_handle _projectM{nullptr};
 projectm_playlist_handle _playlist{nullptr};
@@ -49,7 +63,8 @@ void audioInputCallbackF32(void *userdata, unsigned char *stream, int len) {
     // TODO look into this
 
     cout << "before audioInputCallbackF32" << endl;
-    projectm_pcm_add_float(_projectM, reinterpret_cast<float*>(stream), len/sizeof(float)/2, PROJECTM_STEREO);
+    // projectm_pcm_add_float(_projectM, reinterpret_cast<float*>(stream), len/sizeof(float)/2, PROJECTM_STEREO);
+    projectm_pcm_add_float(_projectM, reinterpret_cast<float*>(stream), len/sizeof(float)/2, PROJECTM_MONO);
     cout << "after audioInputCallbackF32 " << endl;
     // projectm_pcm_add_float(_projectM, reinterpret_cast<float*>(stream), len/sizeof(float)/2, PROJECTM_MONO);
 
