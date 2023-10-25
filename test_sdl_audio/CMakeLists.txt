@@ -1,8 +1,8 @@
-# rm CMakeCache.txt; cmake -DCMAKE_BUILD_TYPE=Release && cmake --build . -- -j && ./test_sdl2
+# rm CMakeCache.txt; cmake -DCMAKE_BUILD_TYPE=Release && cmake --build . && ./test_sdl2
 
 
 # on doorbell
-    # rm CMakeCache.txt; cmake -DCMAKE_BUILD_TYPE=Release && cmake --build . -- -j && LD_LIBRARY_PATH=/home/pi/random/sdl_install/SDL/build/.libs/ ./test_sdl2
+    # rm CMakeCache.txt; cmake -DCMAKE_BUILD_TYPE=Release && cmake --build . && LD_LIBRARY_PATH=/home/pi/random/sdl_install/SDL/build/.libs/ ./test_sdl2
 
 
 cmake_minimum_required(VERSION 3.21 FATAL_ERROR)
@@ -50,6 +50,8 @@ else()
         ${CMAKE_DL_LIBS}
     )
 endif()
+
+message(STATUS "        SDL2 version:        ${SDL2_VERSION}")
 
 
 
