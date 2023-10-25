@@ -13,7 +13,22 @@ ON RASP PI:
     cmake --build .
 
 
+rm CMakeCache.txt; cmake CMakeLists.txt && cmake --build . && ./test_sdl2
+
+
+
+
+
+
+
+
+
+
+
+
 src/sdl-test-ui/projectM-Test-UI
+
+
 
 
 -Wl,-rpath, /usr/lib/libGLESv2.so /usr/lib/libgomp.so /usr/lib/libpthread.a 
