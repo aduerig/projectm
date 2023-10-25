@@ -91,7 +91,7 @@ sources = [
 # zsh: floating point exception (core dumped)  LD_LIBRARY_PATH=src/libprojectM python test_winamp_visual.py
 
 def get_python_config(flag):
-    return subprocess.check_output(['python-config', flag]).decode('utf-8').strip().split()
+    return subprocess.check_output(['python3-config', flag]).decode('utf-8').strip().split()
 
 python_extra_compile_args = get_python_config('--cflags')
 python_extra_link_args = get_python_config('--ldflags')
