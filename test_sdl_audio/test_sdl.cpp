@@ -77,7 +77,8 @@ void audioInputCallbackF32(void *userdata, unsigned char *stream, int len) {
 
 void openAudioInput() {
     const char* driver_name = SDL_GetCurrentAudioDriver();
-    std::cout << "python/c++: Using audio driver: " << driver_name << SDL_GetError() << std::endl;
+    std::cout << "python/c++: Using audio driver: " << driver_name << std::endl;
+    std::cout << "python/c++: if theres an error itd be here: " << SDL_GetError() << std::endl;
 
 
     unsigned int _numAudioDevices = SDL_GetNumAudioDevices(true);  // capture, please
@@ -113,9 +114,15 @@ int main() {
     // SDL_SetHint(SDL_HINT_AUDIO_INCLUDE_MONITORS, "1");
 
 
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
-        SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
+    if (SDL_Init(SDL_INIT_AUDIO) != 0) {
+        SDL_Log("Unable to initialize SDL audio: %s", SDL_GetError());
     }
+
+    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+        SDL_Log("Unable to initialize SDL video: %s", SDL_GetError());
+    }
+
+
     // real is:     2.28.4
     // ours is also 2.28.4
     SDL_version linked;
