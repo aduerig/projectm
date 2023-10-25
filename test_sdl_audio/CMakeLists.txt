@@ -23,7 +23,7 @@ if("${HOSTNAME}" STREQUAL "doorbell")
     # link_directories(test_sdl2 PRIVATE BEFORE "")
     target_link_libraries(test_sdl2
         PRIVATE
-        /home/pi/random/sdl_install/SDL/build/.libs/libSDL2.so
+        /home/pi/random/sdl_install/SDL/build/.libs/libS2DL2.so
         ${CMAKE_DL_LIBS}
     )
 
