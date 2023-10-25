@@ -1,5 +1,10 @@
 # rm CMakeCache.txt; cmake -DCMAKE_BUILD_TYPE=Release && cmake --build . -- -j && ./test_sdl2
 
+
+# on doorbell
+    # rm CMakeCache.txt; cmake -DCMAKE_BUILD_TYPE=Release && cmake --build . -- -j && LD_LIBRARY_PATH=/home/pi/random/sdl_install/SDL/build/.libs/ ./test_sdl2
+
+
 cmake_minimum_required(VERSION 3.21 FATAL_ERROR)
 
 include(CheckSymbolExists)
@@ -27,7 +32,7 @@ add_executable(test_sdl2
 
 execute_process(COMMAND hostname OUTPUT_VARIABLE HOSTNAME OUTPUT_STRIP_TRAILING_WHITESPACE)
 if("${HOSTNAME}" STREQUAL "doorbell")
-    message(STATUS "Hostname is doorbell!")
+    message(STATUS "HOSTNAME IS DOORBELL!")
     include_directories("/home/pi/random/sdl_install/SDL/include/")
     link_directories("/home/pi/random/sdl_install/SDL/build/.libs/")
     target_link_libraries(test_sdl2
@@ -37,14 +42,13 @@ if("${HOSTNAME}" STREQUAL "doorbell")
     )
 
 else()
-    message(STATUS "Hostname is NOT doorbell!")
+    message(STATUS "HOSTNAME IS NOTTTTT DOORBELL!")
     find_package(SDL2 REQUIRED)
     target_link_libraries(test_sdl2
         PRIVATE
         SDL2::SDL2
         ${CMAKE_DL_LIBS}
     )
-
 endif()
 
 
