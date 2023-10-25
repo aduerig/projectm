@@ -72,13 +72,18 @@ include_dirs = [
     str(include_dir_api_2),
     str(include_dir_api_3),
     str(include_dir_api_4),
-    numpy_include_dir
+    numpy_include_dir,
 ]
 
 library_dirs = [
     str(src_libprojectM_folder),
     # str(numpy_lib_path),
 ]
+
+if is_doorbell():
+    custom_sdl_build = pathlib.Path('/home/pi/random/sdl_install/SDL/')
+    include_dirs.append(str(custom_sdl_build))
+    library_dirs.append(str(custom_sdl_build.joinpath('build', '.libs')))
 
 sources = [
     str(this_file_directory.joinpath('winamp_visualmodule.cpp')),
