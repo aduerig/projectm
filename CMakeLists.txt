@@ -56,7 +56,7 @@ option(BUILD_SHARED_LIBS "Build and install libprojectM as a shared libraries. I
 option(ENABLE_PLAYLIST "Enable building the playlist management library" ON)
 option(ENABLE_SDL_UI "Build the SDL2-based developer test UI" OFF)
 option(ENABLE_OPENMP "Enable OpenMP support if available" ON)
-option(ENABLE_THREADING "Enable multithreading support." OFF) # !TODO I CHANGED THIS
+option(ENABLE_THREADING "Enable multithreading support." ON) # !TODO I CHANGED THIS
 option(ENABLE_SYSTEM_GLM "Enable use of system-install GLM library" OFF)
 option(ENABLE_GLES "Enable OpenGL ES support" ON)
 
@@ -86,7 +86,7 @@ endif()
 if(ENABLE_GLES)
     message(STATUS "Building for OpenGL Embedded Profile")
     # We use a local find script for OpenGL::GLES3 until the proposed changes are merged upstream.
-    list(APPEND CMAKE_MODULE_PATH "${PROJECTM_SOURCE_DIR}/cmake/gles")
+    # list(APPEND CMAKE_MODULE_PATH "${PROJECTM_SOURCE_DIR}/cmake/gles")
     find_package(OpenGL REQUIRED COMPONENTS GLES3)
     if(NOT TARGET OpenGL::GLES3)
         message(FATAL_ERROR "No suitable GLES3 library was found.")
