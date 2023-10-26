@@ -113,16 +113,17 @@ def next_preset():
     load_preset(preset_path)
 
 
+presets_directory = this_file_directory.joinpath('presets')
+all_presets = list(get_all_paths(presets_directory, recursive=True, only_files=True, allowed_extensions=['.milk']))
+
 def load_preset(preset_path):
     better_print = preset_path.relative_to(presets_directory)
     better_print = better_print.relative_to(better_print.parts[0])
     print_blue(f'Python: loading preset {better_print}')
     winamp_visual.load_preset(str(preset_path))
-# load_preset(presets_directory.joinpath('tests', '001-line.milk'))
+load_preset(presets_directory.joinpath('tests', '001-line.milk'))
 
 
-presets_directory = this_file_directory.joinpath('presets')
-all_presets = list(get_all_paths(presets_directory, recursive=True, only_files=True, allowed_extensions=['.milk']))
 print_green(f'{len(all_presets):,} milk visualizer presets to choose from')
 def random_preset():
     global preset_index
