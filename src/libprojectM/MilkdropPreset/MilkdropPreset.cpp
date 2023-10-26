@@ -183,21 +183,23 @@ void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audio
     if (error != GL_NO_ERROR) {
         std::cerr << "glReadBuffer(GL_COLOR_ATTACHMENT0); " << error << std::endl;
     }
-#if USE_GLES
-    GLenum drawBuffers[] = {GL_COLOR_ATTACHMENT0};
-    glDrawBuffers(1, drawBuffers);
-    error = glGetError();
-    if (error != GL_NO_ERROR) {
-        std::cerr << "glDrawBuffers(1, drawBuffers); " << error << std::endl;
-    }
 
-#else
-    glDrawBuffer(GL_COLOR_ATTACHMENT0);
-    error = glGetError();
-    if (error != GL_NO_ERROR) {
-        std::cerr << "glDrawBuffer(GL_COLOR_ATTACHMENT0); " << error << std::endl;
-    }
-#endif
+    // !WARNING i commented this out (andrew)
+// #if USE_GLES
+//     GLenum drawBuffers[] = {GL_COLOR_ATTACHMENT0};
+//     glDrawBuffers(1, drawBuffers);
+//     error = glGetError();
+//     if (error != GL_NO_ERROR) {
+//         std::cerr << "glDrawBuffers(1, drawBuffers); " << error << std::endl;
+//     }
+
+// #else
+//     glDrawBuffer(GL_COLOR_ATTACHMENT0);
+//     error = glGetError();
+//     if (error != GL_NO_ERROR) {
+//         std::cerr << "glDrawBuffer(GL_COLOR_ATTACHMENT0); " << error << std::endl;
+//     }
+// #endif
     // glReadPixels(0, 0, grab_width, grab_height, GL_RGB, GL_UNSIGNED_BYTE, andrew_pixels);
 
     // draws framebuffer to screen
