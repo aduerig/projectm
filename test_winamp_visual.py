@@ -127,7 +127,8 @@ def next_preset():
 
 
 presets_directory = this_file_directory.joinpath('presets')
-all_presets = list(get_all_paths(presets_directory, recursive=True, only_files=True, allowed_extensions=['.milk']))
+presets_drawing_liquid_directory = presets_directory.joinpath('presets-cream-of-the-crop', 'Drawing', 'Liquid')
+all_presets = list(get_all_paths(presets_drawing_liquid_directory, recursive=True, only_files=True, allowed_extensions=['.milk']))
 
 def load_preset(preset_path):
     better_print = preset_path.relative_to(presets_directory)

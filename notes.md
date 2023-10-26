@@ -1,3 +1,25 @@
+good in basement
+    Supernova/Stars/PieturP - HSL-tunnelvisions_morphing3.milk
+    Reaction/Liquid Blobby/$$$ Royal - Mashup (236).milk
+    Dancer/Glowsticks Mirror/203.milk
+    Dancer/Murky/mrt ei cynical engineers working for a backward system unite in circle jerk oink.milk
+    Dancer/Glowsticks Mirror/389.milk
+    Fractal/Lattice/EoS - skylight a3 [trip colors flux2]_phat_Multi_shaped2_zoe_colours3.milk
+    Dancer/Whirl/Adam Fx 2 Zylot -  FierceFX Glowworld 7.milk
+
+    Waveform/Spectrum/suksma - negative infinity for not flinching - thr.milk
+    Waveform/Wire Mirror/Serge + Jc - Neon Star Formation003.milk
+    Sparkle/Mass Circles/suksma - dotes hostile undertake - fake rivals real2.milk
+    Drawing/Trails Mirror/fiShbRaiN - witchcraft (metropolish remix) - test - tillex  - bob boyce' 'the cell', pulstar, singh grooves, motor up, pre-filter cyclone.milk
+    
+    Drawing/Liquid/suksma - satanic teleprompter - sth shd - salientanic FLE.milk
+
+
+fix audio:
+    echo "set-default-sink alsa_output.platform-bcm2835_audio.analog-stereo" | pacmd
+
+
+
 git submodule update --init --recursive
     for eval
 
@@ -6,11 +28,13 @@ other frontend
     https://github.com/kblaschke/frontend-sdl2
 
 
+
 cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_SDL_UI=ON
 cmake --build . -- -j
 
 ON RASP PI:
     cmake --build .
+
 
 
 rm CMakeCache.txt; cmake CMakeLists.txt && cmake --build . && ./test_sdl2

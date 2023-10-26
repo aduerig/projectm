@@ -65,8 +65,8 @@ void audioInputCallbackF32(void *userdata, unsigned char *stream, int len) {
     // TODO look into this
 
     // cout << "before audioInputCallbackF32" << endl;
-    projectm_pcm_add_float(_projectM, reinterpret_cast<float*>(stream), len/sizeof(float)/2, PROJECTM_STEREO);
-    // projectm_pcm_add_float(_projectM, reinterpret_cast<float*>(stream), len/sizeof(float)/2, PROJECTM_MONO);
+    // projectm_pcm_add_float(_projectM, reinterpret_cast<float*>(stream), len/sizeof(float)/2, PROJECTM_STEREO);
+    projectm_pcm_add_float(_projectM, reinterpret_cast<float*>(stream), len/sizeof(float)/2, PROJECTM_MONO);
     // cout << "after audioInputCallbackF32 " << endl;
     // projectm_pcm_add_float(_projectM, reinterpret_cast<float*>(stream), len/sizeof(float)/2, PROJECTM_MONO);
 
@@ -147,7 +147,7 @@ void openAudioInput() {
     int device_id_to_open;
     if (strcmp(hostname, "doorbell") == 0) {
         std::cout << "This machine's hostname is doorbell!" << std::endl;
-        device_id_to_open = 0;
+        device_id_to_open = 2;
     } else {
         std::cout << "This machine's hostname is not doorbell!" << std::endl;
         device_id_to_open = 3;
