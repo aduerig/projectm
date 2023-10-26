@@ -190,10 +190,10 @@ void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audio
     // this was once GL_RGB idk why it changed
     glReadPixels(0, 0, grab_width, grab_height, GL_RGB, GL_UNSIGNED_BYTE, andrew_pixels);
 
-    glReadPixels(0, 0, grab_width, grab_height, GL_RGBA, GL_UNSIGNED_BYTE, andrew_pixels);
+    // glReadPixels(0, 0, grab_width, grab_height, GL_RGBA, GL_UNSIGNED_BYTE, andrew_pixels);
     GLenum error = glGetError();
     if (error != GL_NO_ERROR) {
-        std::cerr << "OpenGL glReadPixels error: " << error << std::endl;
+        std::cerr << "OpenGL glReadPixels error: " << error << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
     }
 
     // Swap framebuffers for the next frame.
