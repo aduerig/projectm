@@ -128,7 +128,9 @@ def next_preset():
 
 presets_directory = this_file_directory.joinpath('presets')
 presets_drawing_liquid_directory = presets_directory.joinpath('presets-cream-of-the-crop', 'Drawing', 'Liquid')
-all_presets = list(get_all_paths(presets_drawing_liquid_directory, recursive=True, only_files=True, allowed_extensions=['.milk']))
+presets_dancer_glowsticks_directory = presets_directory.joinpath('presets-cream-of-the-crop', 'Dancer', 'Glowsticks Mirror')
+
+all_presets = list(get_all_paths(presets_dancer_glowsticks_directory, recursive=True, only_files=True, allowed_extensions=['.milk']))
 
 def load_preset(preset_path):
     better_print = preset_path.relative_to(presets_directory)
