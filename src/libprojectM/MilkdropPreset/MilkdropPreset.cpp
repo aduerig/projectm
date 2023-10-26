@@ -175,9 +175,7 @@ void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audio
         std::cerr << "m_flipTexture.Draw(m_framebuffer.GetColorAttachmentTextu " << error << std::endl;
     }
 
-
     // TEST: Copy result to default framebuffer
-
     m_framebuffer.BindRead(m_previousFrameBuffer);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     glReadBuffer(GL_COLOR_ATTACHMENT0);
@@ -185,23 +183,21 @@ void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audio
     if (error != GL_NO_ERROR) {
         std::cerr << "glReadBuffer(GL_COLOR_ATTACHMENT0); " << error << std::endl;
     }
-// #if USE_GLES
-//     {
-//         GLenum drawBuffers[] = {GL_BACK};
-//         glDrawBuffers(1, drawBuffers);
-//     }
-//     error = glGetError();
-//     if (error != GL_NO_ERROR) {
-//         std::cerr << "glDrawBuffers(1, drawBuffers); " << error << std::endl;
-//     }
+#if USE_GLES
+    GLenum drawBuffers[] = {GL_COLOR_ATTACHMENT0};
+    glDrawBuffers(1, drawBuffers);
+    error = glGetError();
+    if (error != GL_NO_ERROR) {
+        std::cerr << "glDrawBuffers(1, drawBuffers); " << error << std::endl;
+    }
 
-// #else
-//     glDrawBuffer(GL_COLOR_ATTACHMENT0);
-//     error = glGetError();
-//     if (error != GL_NO_ERROR) {
-//         std::cerr << "glDrawBuffer(GL_COLOR_ATTACHMENT0); " << error << std::endl;
-//     }
-// #endif
+#else
+    glDrawBuffer(GL_COLOR_ATTACHMENT0);
+    error = glGetError();
+    if (error != GL_NO_ERROR) {
+        std::cerr << "glDrawBuffer(GL_COLOR_ATTACHMENT0); " << error << std::endl;
+    }
+#endif
     // glReadPixels(0, 0, grab_width, grab_height, GL_RGB, GL_UNSIGNED_BYTE, andrew_pixels);
 
     // draws framebuffer to screen
