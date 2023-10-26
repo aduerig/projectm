@@ -20,6 +20,9 @@
 
 
 
+# MESA_GL_VERSION_OVERRIDE=3.3 MESA_GLSL_VERSION_OVERRIDE=330 LD_LIBRARY_PATH=src/libprojectM:/home/pi/random/sdl_install/SDL-release-2.28.4/build/.libs/:/usr/lib/aarch64-linux-gnu python test_winamp_visual.py
+
+
 import sys
 import time
 import pathlib
@@ -166,7 +169,6 @@ keyboard_dict = {
 }
 
 start_listen_keys()
-exit()
 while True:
     if len(keys_to_proccess) > 0:
         key = keys_to_proccess.popleft()
