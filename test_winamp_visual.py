@@ -172,16 +172,16 @@ def grid_pack():
     return (np.round(grid.reshape(GRID_SIZE)[grid_index] * 127 / 100) * 2).astype(np.byte).tobytes()
 
 def render_grid(terminal=True):
-    # if terminal:
+    if terminal:
         to_print_grid = (grid * 2.55).astype(int)
         [print(''.join(f'\033[38;2;{rgb[0]};{rgb[1]};{rgb[2]}m▆\033[0m' for rgb in to_print_grid[x])) for x in range(20)]
         print('\033[F' * 20, end='')
-    # else:
-    #     grid_in = grid_serial.in_waiting
+    else:
+        grid_in = grid_serial.in_waiting
 
-    #     if grid_in > 0 and grid_serial.out_waiting == 0:
-    #         grid_serial.read(grid_in)
-    #         grid_serial.write(grid_pack())
+        if grid_in > 0 and grid_serial.out_waiting == 0:
+            grid_serial.read(grid_in)
+            grid_serial.write(grid_pack())
 
 
 def increase_beat_sensitivity():
