@@ -314,6 +314,11 @@ winamp_visual_setup_winamp(PyObject* self, PyObject* args) {
 
     std::cout << "C++ - Python Extension: setting up winamp" << std::endl;
     _projectM = projectm_create();
+    if (_projectM == nullptr) {
+        std::cout << "C++ - Python Extension: projectm_create() failed" << std::endl;
+        PyErr_SetString(PyExc_ValueError, "projectm_create() failed");
+        return NULL;
+    }
     projectm_set_window_size(_projectM, 32, 20);
 
 
