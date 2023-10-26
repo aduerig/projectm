@@ -77,6 +77,7 @@ void MilkdropPreset::Initialize(const RenderContext& renderContext)
 
 void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audioData, const RenderContext& renderContext)
 {
+    GLenum error;
     m_state.audioData = audioData;
     m_state.renderContext = renderContext;
 
@@ -88,11 +89,20 @@ void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audio
     }
 
     m_state.mainTexture = m_framebuffer.GetColorAttachmentTexture(m_previousFrameBuffer, 0);
+    error = glGetError();
+    if (error != GL_NO_ERROR) {
+        std::cerr << "OpenGL ramebuffer.GetColorAttachmentText error: " << error << std::endl;
+    }
 
     // First evaluate per-frame code
     PerFrameUpdate();
 
     glViewport(0, 0, renderContext.viewportSizeX, renderContext.viewportSizeY);
+    error = glGetError();
+    if (error != GL_NO_ERROR) {
+        std::cerr << "OpenGL glViewport error: " << error << std::endl;
+    }
+
 
     m_framebuffer.Bind(m_previousFrameBuffer);
     // Motion vector field. Drawn to the previous frame texture before warping it.
@@ -191,9 +201,9 @@ void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audio
     // glReadPixels(0, 0, grab_width, grab_height, GL_RGB, GL_UNSIGNED_BYTE, andrew_pixels);
 
     glReadPixels(0, 0, grab_width, grab_height, GL_RGBA, GL_UNSIGNED_BYTE, andrew_pixels);
-    GLenum error = glGetError();
+    error = glGetError();
     if (error != GL_NO_ERROR) {
-        std::cerr << "OpenGL glReadPixels error: " << error << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
+        std::cerr << "OpenGL glReadPixels error: " << error << std::endl;
     }
 
     // Swap framebuffers for the next frame.

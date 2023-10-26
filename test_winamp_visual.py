@@ -176,7 +176,7 @@ while True:
             print_red(f'Python: unknown key {key}')
     winamp_visual.render_frame()
     winamp_visual.load_into_numpy_array(grid)
-    print_grid_to_terminal()
+    # print_grid_to_terminal()
 
     # winamp_visual.print_to_terminal_higher_level()
     time.sleep(1/24)
