@@ -82,18 +82,21 @@ def start_listen_keys():
                 key_name = key.name
 
 
-        def listen_for_keystrokes():
+        def listen_for_keystrokes_normal():
             with Listener(on_press=on_press, on_release=on_release) as listener:
                 listener.join()
 
-        threading.Thread(target=listen_for_keystrokes, args=[], daemon=True).start()
+        threading.Thread(target=listen_for_keystrokes_normal, args=[], daemon=True).start()
     elif is_doorbell():
         # print_red('NOT LISTENING FOR KEYSTROKES, NEED TO IMPLEMENT THIS')
         from sshkeyboard import listen_keyboard
         def press(key):
             print(f'ssh keyboard detected key: {key}')
             keys_to_proccess.append(key)
-        listen_keyboard(on_press=press)
+        def listen_for_keystrokes_ssh():
+            listen_keyboard(on_press=press)
+        threading.Thread(target=listen_for_keystrokes_ssh, args=[], daemon=True).start()
+
 
 
 preset_history = collections.deque([])
