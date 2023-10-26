@@ -103,8 +103,8 @@ int projectMSDL::openAudioInput() {
     // So we always try it, and revert to fakeAudio if the default fails _and_ NumAudioDevices == 0.
     
     // arch linux main computer andrew
-    _curAudioDevice = 3;
-    _selectedAudioDevice = 3;
+    _curAudioDevice = 2;
+    _selectedAudioDevice = 2;
     if(!initAudioInput() && _numAudioDevices == 0) {
         // the default device doesn't work, and there's no other device to try
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "No audio capture devices found");

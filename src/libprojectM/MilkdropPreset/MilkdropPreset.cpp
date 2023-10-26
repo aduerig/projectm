@@ -203,9 +203,9 @@ void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audio
     // glReadPixels(0, 0, grab_width, grab_height, GL_RGB, GL_UNSIGNED_BYTE, andrew_pixels);
 
     // draws framebuffer to screen
-    // glBlitFramebuffer(0, 0, renderContext.viewportSizeX, renderContext.viewportSizeY,
-    //                   0, 0, renderContext.viewportSizeX, renderContext.viewportSizeY,
-    //                   GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBlitFramebuffer(0, 0, renderContext.viewportSizeX, renderContext.viewportSizeY,
+                      0, 0, renderContext.viewportSizeX, renderContext.viewportSizeY,
+                      GL_COLOR_BUFFER_BIT, GL_NEAREST);
     // error = glGetError();
     // if (error != GL_NO_ERROR) {
     //     std::cerr << "OpenGL glBlitFramebuffer error: " << error << std::endl;

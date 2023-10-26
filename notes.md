@@ -12,10 +12,13 @@ good in basement
     Sparkle/Mass Circles/suksma - dotes hostile undertake - fake rivals real2.milk
     Drawing/Trails Mirror/fiShbRaiN - witchcraft (metropolish remix) - test - tillex  - bob boyce' 'the cell', pulstar, singh grooves, motor up, pre-filter cyclone.milk
 
+    ./presets/presets-cream-of-the-crop/Waveform/Wire Mirror/suksma - ignore butte des mortes prayer heap.milk
+
     Drawing/Liquid/suksma - satanic teleprompter - sth shd - salientanic FLE.milk
 
     Dancer/Glowsticks Mirror/200.milk
     Dancer/Glowsticks Mirror/207 mrt get out to where the shooting's going on.milk
+    ./presets/presets-cream-of-the-crop/Waveform/Wire Circular/Geiss - Skin Dots 6 (Jelly).milk
 
     talking:
         Dancer/Glowsticks Mirror/drugsincombat - liquifried squid i.milk
