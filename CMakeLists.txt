@@ -92,11 +92,17 @@ if(ENABLE_GLES)
     # We use a local find script for OpenGL::GLES3 until the proposed changes are merged upstream.
     # list(APPEND CMAKE_MODULE_PATH "${PROJECTM_SOURCE_DIR}/cmake/gles")
     
-    add_library(OpenGL::GLES3 INTERFACE IMPORTED)
-    target_include_directories(OpenGL::GLES3 INTERFACE /usr/include/GLES3/)
-    target_link_libraries(OpenGL::GLES3 INTERFACE /usr/lib/aarch64-linux-gnu/libGLESv2.so)
 
-    # find_package(OpenGL REQUIRED COMPONENTS GLES3)
+    execute_process(COMMAND hostname OUTPUT_VARIABLE HOSTNAME OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if("${HOSTNAME}" STREQUAL "doorbell")
+        message(STATUS "HOSTNAME IS DOORBELL!")
+        add_library(OpenGL::GLES3 INTERFACE IMPORTED)
+        target_include_directories(OpenGL::GLES3 INTERFACE /usr/include/GLES3/)
+        target_link_libraries(OpenGL::GLES3 INTERFACE /usr/lib/aarch64-linux-gnu/libGLESv2.so)    
+    else()
+        message(STATUS "HOSTNAME IS NOTTTTT DOORBELL!")
+        find_package(OpenGL REQUIRED COMPONENTS GLES3)
+    endif()
 
     if(NOT TARGET OpenGL::GLES3)
         message(FATAL_ERROR "No suitable GLES3 library was found.")
