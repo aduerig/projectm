@@ -107,8 +107,7 @@ void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audio
     m_framebuffer.Bind(m_previousFrameBuffer);
     // Motion vector field. Drawn to the previous frame texture before warping it.
     // Only do it after drawing one frame after init or resize.
-    if (!m_isFirstFrame)
-    {
+    if (!m_isFirstFrame) {
         m_motionVectors.Draw(m_perFrameContext, m_motionVectorUVMap->Texture());
     }
 
@@ -124,6 +123,10 @@ void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audio
 
     // Draw previous frame image warped via per-pixel mesh and warp shader
     m_perPixelMesh.Draw(m_state, m_perFrameContext, m_perPixelContext);
+    error = glGetError();
+    if (error != GL_NO_ERROR) {
+        std::cerr << "OpenGL m_perPixelMesh.Draw(m_state, m_perFr error: " << error << std::endl;
+    }
 
     // Remove the u/v texture from the framebuffer.
     m_framebuffer.RemoveColorAttachment(m_currentFrameBuffer, 1);
@@ -148,6 +151,10 @@ void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audio
         m_darkenCenter.Draw();
     }
     m_border.Draw(m_perFrameContext);
+    error = glGetError();
+    if (error != GL_NO_ERROR) {
+        std::cerr << "rder.Draw(m_perFra " << error << std::endl;
+    }
 
     // y-flip the image for final compositing again
     m_flipTexture.Draw(m_framebuffer.GetColorAttachmentTexture(m_currentFrameBuffer, 0));
@@ -159,10 +166,13 @@ void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audio
 
     m_finalComposite.Draw(m_state, m_perFrameContext);
 
-    if (!m_finalComposite.HasCompositeShader())
-    {
+    if (!m_finalComposite.HasCompositeShader()) {
         // Flip texture again in "previous" framebuffer as old-school effects are still upside down.
         m_flipTexture.Draw(m_framebuffer.GetColorAttachmentTexture(m_previousFrameBuffer, 0), m_framebuffer, m_previousFrameBuffer);
+    }
+    error = glGetError();
+    if (error != GL_NO_ERROR) {
+        std::cerr << "m_flipTexture.Draw(m_framebuffer.GetColorAttachmentTextu " << error << std::endl;
     }
 
 
@@ -171,14 +181,26 @@ void MilkdropPreset::RenderFrame(const libprojectM::Audio::FrameAudioData& audio
     m_framebuffer.BindRead(m_previousFrameBuffer);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     glReadBuffer(GL_COLOR_ATTACHMENT0);
-
+    error = glGetError();
+    if (error != GL_NO_ERROR) {
+        std::cerr << "glReadBuffer(GL_COLOR_ATTACHMENT0);" << error << std::endl;
+    }
 #if USE_GLES
     {
         GLenum drawBuffers[] = {GL_BACK};
         glDrawBuffers(1, drawBuffers);
     }
+    error = glGetError();
+    if (error != GL_NO_ERROR) {
+        std::cerr << "glDrawBuffers(1, drawBuffers);" << error << std::endl;
+    }
+
 #else
     glDrawBuffer(GL_COLOR_ATTACHMENT0);
+    error = glGetError();
+    if (error != GL_NO_ERROR) {
+        std::cerr << "glDrawBuffer(GL_COLOR_ATTACHMENT0);" << error << std::endl;
+    }
 #endif
     // glReadPixels(0, 0, grab_width, grab_height, GL_RGB, GL_UNSIGNED_BYTE, andrew_pixels);
 
