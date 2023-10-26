@@ -401,8 +401,8 @@ winamp_visual_print_to_terminal_higher_level(PyObject* self, PyObject* args) {
     std::stringstream ss;
     for (int y = 0; y < grab_height; y++) {
         for (int x = 0; x < grab_width; x++) {
-            // int index = (y * grab_width + x) * 4;
-            int index = (y * grab_width + x) * 3;
+            int index = (y * grab_width + x) * 4;
+            // int index = (y * grab_width + x) * 3;
             int r = andrew_pixels[index];
             int g = andrew_pixels[index + 1];
             int b = andrew_pixels[index + 2];

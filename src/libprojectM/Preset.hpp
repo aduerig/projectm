@@ -13,8 +13,8 @@ public:
     int grab_height = 20; 
     int grab_width = 32;
     // !TODO MAYBE LEAK HERE?
-    GLubyte* andrew_pixels = new GLubyte[grab_width * grab_height * 3];
-    // GLubyte* andrew_pixels = new GLubyte[grab_width * grab_height * 4];
+    // GLubyte* andrew_pixels = new GLubyte[grab_width * grab_height * 3];
+    GLubyte* andrew_pixels = new GLubyte[grab_width * grab_height * 4];
 
     /**
      * @brief Initializes additional preset resources.
