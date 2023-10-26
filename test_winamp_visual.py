@@ -174,6 +174,7 @@ keyboard_dict = {
 start_listen_keys()
 while True:
     if len(keys_to_proccess) > 0:
+        print(f'Running a key {keys_to_proccess[0]}')
         key = keys_to_proccess.popleft()
         if key in keyboard_dict:
             keyboard_dict[key]()
